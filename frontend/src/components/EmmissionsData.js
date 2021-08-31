@@ -3,8 +3,8 @@ const { create } = require("ipfs-http-client");
 
 const client = create();
 
-async () => {
-  const carbonForm = {
+export async function emmissionsData() {
+  const form = {
     general: {
       companyName: {
         /*input from form*/
@@ -104,5 +104,5 @@ async () => {
       },
     },
   };
-  const carbonForm = await client.dag.put(carbonForm);
-};
+  const carbonForm = await client.dag.put(form);
+}
