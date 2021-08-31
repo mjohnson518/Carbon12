@@ -1,3 +1,13 @@
+# Setup
+
+1. add the packages with `yarn install`
+
+2. start hardhat with `yarn chain`
+
+3. start react with yarn start
+
+4. run `yarn deploy` - this will deploy the contracts to the local chain, you should see them in your hardhat logs.
+
 # Advanced Sample Hardhat Project
 
 This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
