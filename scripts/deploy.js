@@ -5,6 +5,7 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const path = require("path");
+const fs = require("fs");
 
 async function main() {
   // This is just a convenience check
@@ -23,7 +24,7 @@ async function main() {
   // await hre.run('compile');
 
   // ethers is avaialble in the global scope
-  const [deployer] = await ethers.getSigners();
+  const [deployer] = await hre.ethers.getSigners();
   console.log(
     "Deploying the contracts with the account:",
     await deployer.getAddress()
@@ -46,6 +47,8 @@ async function main() {
 
   console.log("Greeter deployed to:", greeter.address);
   console.log("Greeter deployed to:", greeter.address);
+
+  await hre.storageLayout.export();
 
   // We also save the contract's artifacts and address in the frontend directory
   saveFrontendFiles(greeter, token);
