@@ -21,32 +21,32 @@ async () => {
       /*input from form*/
     },
     functionalUnit: {
-      /*input from form*/
+      /*unit of analysis*/
     },
     BiogenicCarbonContent: {
-      /*input from form*/
+      /*biogenic carbon content per FU*/
     },
     fossilCarbonContent: {
-      /*input from form*/
+      /*fossil carbon content per FU*/
     },
     standards: {
-      /*input from form*/
+      /*standard(s) (ISO,GHGP, PAS 2050, PCR, etc.) used for the PCF calculation including the info for which life cycle states the standards are used*/
     },
     ghgsInventory: {
-      /*input from form*/
+      /*GHGs included in this PCF, incl. disclosure and justification if any of the required gases (per the GHG Protocol Product standard) are not included*/
     },
     GlobalWarmingFactors: {
-      /*input from form*/
+      /*global warming potential factors derived from IPCC Assessment Report "AR 5"*/
     },
   };
   const generalCID = await client.dag.put(general);
 
   const boundary = {
     systemBoundary: {
-      /*input from form*/
+      /*life cycle stages accounted for in the PCF and attributable processes in each life cycle stage, incl. disclosure if and hgow life cycle stages are defined differently than in the Pathfinder Framework and/or were excluded*/
     },
     timePeriod: {
-      /*input from form*/
+      /*time period corresponding to the PCF*/
     },
   };
 
