@@ -45,5 +45,21 @@
     "prettier-plugin-solidity": "^1.0.0-beta.13",
     "solhint": "^3.3.6",
     "solidity-coverage": "^0.7.17"
+  },
+  "description": "1. add the packages with `yarn install`",
+  "version": "1.0.0",
+  "main": ".eslintrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjohnson518/ChainShot_Final_Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mjohnson518/ChainShot_Final_Project/issues"
+  },
+  "homepage": "https://github.com/mjohnson518/ChainShot_Final_Project#readme",
+  "dependencies": {
+    "ipfs-http-client": "^52.0.2"
   }
 }
