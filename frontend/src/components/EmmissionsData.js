@@ -96,7 +96,9 @@ async () => {
       /*resulst of any uncertainty assessment*/
     },
   };
+
   const dataCollectionCID = await client.dag.put(dataCollection);
+
   const allocation = {
     standards: {
       /*input from form*/
