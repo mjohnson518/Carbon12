@@ -26,13 +26,12 @@
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
-    "eslint": "^6.6.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.1",
-    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.6",
     "hardhat": "^2.6.1",
@@ -60,6 +59,10 @@
   },
   "homepage": "https://github.com/mjohnson518/ChainShot_Final_Project#readme",
   "dependencies": {
+    "@chakra-ui/react": "^1.6.7",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "framer-motion": "^4",
     "ipfs-http-client": "^52.0.2"
   }
 }
