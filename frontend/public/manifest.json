@@ -1,6 +1,6 @@
 {
-  "short_name": "Hardhat React Dapp",
-  "name": "Hardhat Create React Dapp Sample",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
@@ -13,9 +13,9 @@
       "sizes": "192x192"
     },
     {
-      "src": "logo310.png",
+      "src": "logo512.png",
       "type": "image/png",
-      "sizes": "310x310"
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",

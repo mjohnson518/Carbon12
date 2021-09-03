@@ -5,7 +5,6 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const path = require("path");
-const fs = require("fs");
 
 async function main() {
   // This is just a convenience check
