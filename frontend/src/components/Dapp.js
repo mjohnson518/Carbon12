@@ -2,7 +2,7 @@ import React from "react";
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
-
+import { Container, VStack, Text, Heading} from "@chakra-ui/react"
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
 import TokenArtifact from "../contracts/Token.json";
@@ -37,6 +37,7 @@ const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 // Note that (3) and (4) are specific of this sample application, but they show
 // you how to keep your Dapp and contract's state in sync,  and how to send a
 // transaction.
+
 export class Dapp extends React.Component {
   constructor(props) {
     super(props);
@@ -90,74 +91,63 @@ export class Dapp extends React.Component {
 
     // If everything is loaded, we render the application.
     return (
-      <div className="container p-4">
-        <div className="row">
-          <div className="col-12">
-            <h1>
-              {this.state.tokenData.name} ({this.state.tokenData.symbol})
-            </h1>
-            <p>
-              Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
-              <b>
-                {this.state.balance.toString()} {this.state.tokenData.symbol}
-              </b>
-              .
-            </p>
-          </div>
-        </div>
+      <VStack>
+        <Container maxW="container.xl" centerContent>
+          <Heading as="h1">{this.state.tokenData.name} ({this.state.tokenData.symbol})</Heading>
+          <Text>
+            Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
+            <b>
+              {this.state.balance.toString()} {this.state.tokenData.symbol}
+            </b>.
+          </Text>
+        </Container>
 
-        <hr />
+        <Container maxW="container.xl" centerContent>
+          {/*
+            Sending a transaction isn't an immidiate action. You have to wait
+            for it to be mined.
+            If we are waiting for one, we show a message here.
+          */}
+          {this.state.txBeingSent && (
+            <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
+          )}
 
-        <div className="row">
-          <div className="col-12">
-            {/*
-              Sending a transaction isn't an immidiate action. You have to wait
-              for it to be mined.
-              If we are waiting for one, we show a message here.
-            */}
-            {this.state.txBeingSent && (
-              <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
-            )}
+          {/*
+            Sending a transaction can fail in multiple ways.
+            If that happened, we show a message here.
+          */}
+          {this.state.transactionError && (
+            <TransactionErrorMessage
+              message={this._getRpcErrorMessage(this.state.transactionError)}
+              dismiss={() => this._dismissTransactionError()}
+            />
+          )}
+        </Container>
 
-            {/*
-              Sending a transaction can fail in multiple ways.
-              If that happened, we show a message here.
-            */}
-            {this.state.transactionError && (
-              <TransactionErrorMessage
-                message={this._getRpcErrorMessage(this.state.transactionError)}
-                dismiss={() => this._dismissTransactionError()}
-              />
-            )}
-          </div>
-        </div>
+        <Container maxW="container.xl" centerContent>
+          {/*
+            If the user has no tokens, we don't show the Tranfer form
+          */}
+          {this.state.balance.eq(0) && (
+            <NoTokensMessage selectedAddress={this.state.selectedAddress} />
+          )}
 
-        <div className="row">
-          <div className="col-12">
-            {/*
-              If the user has no tokens, we don't show the Tranfer form
-            */}
-            {this.state.balance.eq(0) && (
-              <NoTokensMessage selectedAddress={this.state.selectedAddress} />
-            )}
-
-            {/*
-              This component displays a form that the user can use to send a
-              transaction and transfer some tokens.
-              The component doesn't have logic, it just calls the transferTokens
-              callback.
-            */}
-            {this.state.balance.gt(0) && (
-              <Transfer
-                transferTokens={(to, amount) =>
-                  this._transferTokens(to, amount)
-                }
-                tokenSymbol={this.state.tokenData.symbol}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+          {/*
+            This component displays a form that the user can use to send a
+            transaction and transfer some tokens.
+            The component doesn't have logic, it just calls the transferTokens
+            callback.
+          */}
+          {this.state.balance.gt(0) && (
+            <Transfer
+              transferTokens={(to, amount) =>
+                this._transferTokens(to, amount)
+              }
+              tokenSymbol={this.state.tokenData.symbol}
+            />
+          )}
+        </Container>
+      </VStack>
     );
   }
 
