@@ -3,6 +3,7 @@ import React from "react";
 import { NetworkErrorMessage } from "./NetworkErrorMessage";
 
 import { Button, Flex, Box, Stack, StackDivider, Text, useColorModeValue as mode } from '@chakra-ui/react'
+import { Logo } from "./Logo";
 
 export const Description = (props) => {
   const { title, children } = props
@@ -24,7 +25,7 @@ export const Description = (props) => {
 
 export function ConnectWallet({ connectWallet, networkError, dismiss }) {
   return (
-    <Box as="section" bg={mode('gray.100', 'gray.800')} py="12">
+    <Box as="section" bg={mode('gray.100', 'gray.800')} mt={40} minHeight="425px">
       <Box maxW={{ base: 'xl', md: '7xl' }} mx="auto" px={{ base: '6', md: '8' }}>
         <Box
           maxW="3xl"
@@ -49,6 +50,7 @@ export function ConnectWallet({ connectWallet, networkError, dismiss }) {
             </Text>
           </Box>
           <Stack spacing="4" divider={<StackDivider />}>
+            <Logo bodyLogo="true" />
             <Stack>
               <Button
                 onClick={connectWallet}

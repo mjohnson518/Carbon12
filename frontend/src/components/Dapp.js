@@ -2,7 +2,8 @@ import React from "react";
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
-import { Container, VStack, Text, Heading} from "@chakra-ui/react"
+import { Container, VStack, Text, Heading } from "@chakra-ui/react"
+import TypeFormIFrame from "./TypeformIFrame";
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
 import TokenArtifact from "../contracts/Token.json";
@@ -18,6 +19,8 @@ import { Transfer } from "./Transfer";
 import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 import { NoTokensMessage } from "./NoTokensMessage";
+import { Logo } from "./Logo";
+import { Table } from '../components/Table';
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
@@ -92,6 +95,8 @@ export class Dapp extends React.Component {
     // If everything is loaded, we render the application.
     return (
       <VStack>
+        <Logo bodyLogo="true" />
+        <TypeFormIFrame />
         <Container maxW="container.xl" centerContent>
           <Heading as="h1">{this.state.tokenData.name} ({this.state.tokenData.symbol})</Heading>
           <Text>
@@ -147,6 +152,8 @@ export class Dapp extends React.Component {
             />
           )}
         </Container>
+
+        <Table />
       </VStack>
     );
   }
