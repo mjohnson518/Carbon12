@@ -12,6 +12,9 @@ export async function emmissionsData() {
       contactInformation: {
         /*input from form*/
       },
+      contactEmail: {
+        /*input from form*/
+      },
       productName: {
         /*input from form*/
       },
@@ -59,7 +62,7 @@ export async function emmissionsData() {
       secondaryDataSources: {
         /*secondary data sources used and the information which life cycle stages the sources were used for*/
       },
-      timePeriod: {
+      timePeriod1: {
         /*time period of data collection of both primary and secondary data sources*/
       },
       temporalRepresentativeness: {
@@ -77,9 +80,6 @@ export async function emmissionsData() {
       dataCollectionMethod: {
         /*data collection methods, data quality, and any efforts to improve data quality, incl. indication of data aggregation used, e.g. per functional unit*/
       },
-      dataQuality: {
-        /*input from form*/
-      },
       massBalances: {
         /*bool*/
       },
@@ -91,7 +91,7 @@ export async function emmissionsData() {
       },
     },
     allocation: {
-      standards: {
+      standards1: {
         /*input from form*/
       },
       recycledMaterialAllocation: {
