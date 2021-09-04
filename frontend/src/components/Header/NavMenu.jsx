@@ -1,7 +1,7 @@
-import { Box, Flex, HStack } from '@chakra-ui/react'
-import * as React from 'react'
-import { HiDuplicate, HiMail, HiRefresh, HiTemplate, HiViewGrid } from 'react-icons/hi'
-import { NavItem } from './NavItem'
+import { Box, Flex, HStack, useColorModeValue as mode } from '@chakra-ui/react'
+import * as React from 'react';
+
+import { NavItem } from './NavItem';
 
 const MobileNavMenu = (props) => {
   const { isOpen } = props
@@ -19,7 +19,7 @@ const MobileNavMenu = (props) => {
       w="full"
     >
       <Box px="4">
-        <NavItem.Mobile active label="Dashboard" />
+        <NavItem.Mobile active label="Dashboard" color={mode('gray.500', 'gray.500')}/>
         {/* <NavItem.Mobile label="Campaigns" />
         <NavItem.Mobile label="Forms" />
         <NavItem.Mobile label="Sites" />
@@ -38,7 +38,7 @@ const DesktopNavMenu = () => (
       lg: 'flex',
     }}
   >
-    <NavItem.Desktop active icon={<HiViewGrid />} label="Home" />
+    <NavItem.Desktop active label="Home" color={mode('gray.500', 'gray.500')}/>
     {/* <NavItem.Desktop icon={<HiMail />} label="Campaigns" />
     <NavItem.Desktop icon={<HiDuplicate />} label="Forms" />
     <NavItem.Desktop icon={<HiTemplate />} label="Sites" />
