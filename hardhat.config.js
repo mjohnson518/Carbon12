@@ -44,7 +44,8 @@ module.exports = {
     localhost: {
       url: "http://localhost:8545",
       accounts: {
-        mnemonic: "some group of words to make a mnemonic for an account",
+        mnemonic:
+          "doll exercise remember entire churn phrase original spice camera suspect height must",
       },
     },
     hardhat: {

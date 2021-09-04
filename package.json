@@ -63,6 +63,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "framer-motion": "^4",
+    "ipfs": "^0.58.3",
     "ipfs-http-client": "^52.0.2"
   }
 }

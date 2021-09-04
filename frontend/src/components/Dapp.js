@@ -1,31 +1,31 @@
-import React from "react";
+import React from 'react';
 
 // We'll use ethers to interact with the Ethereum network and our contract
-import { ethers } from "ethers";
-import { Container, VStack, Text, Heading } from "@chakra-ui/react"
-import TypeFormIFrame from "./TypeformIFrame";
+import { ethers } from 'ethers';
+import { Container, VStack, Text, Heading } from '@chakra-ui/react';
+import TypeFormIFrame from './TypeformIFrame';
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/Token.json";
-import contractAddresses from "../contracts/contract-address.json";
+import TokenArtifact from '../contracts/Token.json';
+import contractAddresses from '../contracts/contract-address.json';
 
 // All the logic of this dapp is contained in the Dapp component.
 // These other components are just presentational ones: they don't have any
 // logic. They just render HTML.
-import { NoWalletDetected } from "./NoWalletDetected";
-import { ConnectWallet } from "./ConnectWallet";
-import { Loading } from "./Loading";
-import { Transfer } from "./Transfer";
-import { TransactionErrorMessage } from "./TransactionErrorMessage";
-import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
-import { NoTokensMessage } from "./NoTokensMessage";
-import { Logo } from "./Logo";
+import { NoWalletDetected } from './NoWalletDetected';
+import { ConnectWallet } from './ConnectWallet';
+import { Loading } from './Loading';
+import { Transfer } from './Transfer';
+import { TransactionErrorMessage } from './TransactionErrorMessage';
+import { WaitingForTransactionMessage } from './WaitingForTransactionMessage';
+import { NoTokensMessage } from './NoTokensMessage';
+import { Logo } from './Logo';
 import { Table } from '../components/Table';
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
 // to use when deploying to other networks.
-const HARDHAT_NETWORK_ID = '31337';
+const HARDHAT_NETWORK_ID = '1337';
 
 // This is an error code that indicates that the user canceled a transaction
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
@@ -98,12 +98,15 @@ export class Dapp extends React.Component {
         <Logo bodyLogo="true" />
         <TypeFormIFrame />
         <Container maxW="container.xl" centerContent>
-          <Heading as="h1">{this.state.tokenData.name} ({this.state.tokenData.symbol})</Heading>
+          <Heading as="h1">
+            {this.state.tokenData.name} ({this.state.tokenData.symbol})
+          </Heading>
           <Text>
-            Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
+            Welcome <b>{this.state.selectedAddress}</b>, you have{' '}
             <b>
               {this.state.balance.toString()} {this.state.tokenData.symbol}
-            </b>.
+            </b>
+            .
           </Text>
         </Container>
 
@@ -145,9 +148,7 @@ export class Dapp extends React.Component {
           */}
           {this.state.balance.gt(0) && (
             <Transfer
-              transferTokens={(to, amount) =>
-                this._transferTokens(to, amount)
-              }
+              transferTokens={(to, amount) => this._transferTokens(to, amount)}
               tokenSymbol={this.state.tokenData.symbol}
             />
           )}
@@ -182,7 +183,7 @@ export class Dapp extends React.Component {
     this._initialize(selectedAddress);
 
     // We reinitialize it whenever the user changes their account.
-    window.ethereum.on("accountsChanged", ([newAddress]) => {
+    window.ethereum.on('accountsChanged', ([newAddress]) => {
       this._stopPollingData();
       // `accountsChanged` event can be triggered with an undefined newAddress.
       // This happens when the user removes the Dapp from the "Connected
@@ -196,7 +197,7 @@ export class Dapp extends React.Component {
     });
 
     // We reset the dapp state if the network is changed
-    window.ethereum.on("networkChanged", ([networkId]) => {
+    window.ethereum.on('networkChanged', ([networkId]) => {
       this._stopPollingData();
       this._resetState();
     });
@@ -302,7 +303,7 @@ export class Dapp extends React.Component {
       if (receipt.status === 0) {
         // We can't know the exact error that made the transaction fail when it
         // was mined, so we throw this generic one.
-        throw new Error("Transaction failed");
+        throw new Error('Transaction failed');
       }
 
       // If we got here, the transaction was successful, so you may want to
@@ -358,7 +359,7 @@ export class Dapp extends React.Component {
     }
 
     this.setState({
-      networkError: 'Please connect Metamask to Localhost:8545'
+      networkError: 'Please connect Metamask to Localhost:8545',
     });
 
     return false;

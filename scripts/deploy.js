@@ -39,21 +39,21 @@ async function main() {
   console.log("Token address:", token.address);
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const C12NFT = await hre.ethers.getContractFactory("C12NFT");
+  const c12nft = await C12NFT.deploy();
 
-  await greeter.deployed();
+  await c12nft.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
-  console.log("Greeter deployed to:", greeter.address);
+  console.log("C12NFT deployed to:", c12nft.address);
+  console.log("C12NFT deployed to:", c12nft.address);
 
   await hre.storageLayout.export();
 
   // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(greeter, token);
+  saveFrontendFiles(c12nft, token);
 }
 
-function saveFrontendFiles(greeter, token) {
+function saveFrontendFiles(c12nft, token) {
   const fs = require("fs");
   const contractsDir = path.join(__dirname, "/../frontend/src/contracts");
 
@@ -62,21 +62,21 @@ function saveFrontendFiles(greeter, token) {
   }
 
   const addresses = {
-    Greeter: greeter.address,
+    C12NFT: c12nft.address,
     Token: token.address,
-  }
+  };
 
   fs.writeFileSync(
     contractsDir + "/contract-address.json",
     JSON.stringify(addresses, undefined, 2)
   );
 
-  const GreeterArtifact = hre.artifacts.readArtifactSync("Greeter");
+  const C12NFTArtifact = hre.artifacts.readArtifactSync("C12NFT");
   const TokenArtifact = hre.artifacts.readArtifactSync("Token");
 
   fs.writeFileSync(
-    contractsDir + "/Greeter.json",
-    JSON.stringify(GreeterArtifact, null, 2)
+    contractsDir + "/C12NFT.json",
+    JSON.stringify(C12NFTArtifact, null, 2)
   );
 
   fs.writeFileSync(
