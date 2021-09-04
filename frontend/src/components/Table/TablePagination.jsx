@@ -4,7 +4,7 @@ import { data } from './_data'
 
 export const TablePagination = () => {
   return (
-    <Flex align="center" justify="space-between">
+    <Flex align="center" justify="space-between" m={5}>
       <Text color={mode('gray.600', 'gray.400')} fontSize="sm">
         {data.length} members
       </Text>

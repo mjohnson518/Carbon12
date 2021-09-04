@@ -1,9 +1,9 @@
-import { Box, ChakraProvider, theme } from '@chakra-ui/react';
+import { Box, ChakraProvider } from '@chakra-ui/react';
 import React from 'react';
+import theme from './theme';
 
 import { Dapp } from './components/Dapp';
 import { Layout } from './components/Layout';
-
 
 function App() {
   return (
