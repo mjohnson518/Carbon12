@@ -52,11 +52,11 @@ export const ProfileDropdown = () => (
           </Text>
         </Box>
       </HStack>
-      <MenuItem fontWeight="medium">Your Profile</MenuItem>
-      <MenuItem fontWeight="medium">Feedback & Support</MenuItem>
-      <MenuItem fontWeight="medium">Account Settings</MenuItem>
+      <MenuItem fontWeight="medium">Your Account</MenuItem>
+      <MenuItem fontWeight="medium">Settings</MenuItem>
+      {/* <MenuItem fontWeight="medium">Account Settings</MenuItem> */}
       <MenuItem fontWeight="medium" color={mode('red.500', 'red.300')}>
-        Sign out
+        Disconnect
       </MenuItem>
     </MenuList>
   </Menu>

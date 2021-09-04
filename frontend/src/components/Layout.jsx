@@ -35,7 +35,7 @@ export const Layout = ({children}) => {
             {STATUSES.map((status, i) => (
               <WrapItem key={i}>
                 <Button
-                  colorScheme="gray"
+                  colorScheme="teal"
                   variant="outline"
                   onClick={() =>
                     toast({
@@ -52,7 +52,7 @@ export const Layout = ({children}) => {
           </Wrap>
 
           <HStack spacing="3" flex-direction="row-reverse">
-            <ColorModeSwitcher justifySelf="flex-end" />
+            <ColorModeSwitcher justifySelf="flex-end" color={mode('gray.500', 'gray.500')} />
             {/* <Notification display={{ base: 'none', lg: 'inline-flex' }} /> */}
             <ProfileDropdown />
           </HStack>
