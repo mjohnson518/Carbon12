@@ -1,12 +1,12 @@
-import { Button, ButtonGroup, HStack, Select, Stack } from '@chakra-ui/react';
+import { Button, ButtonGroup, HStack, Select, Stack, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { RiArrowRightUpLine } from 'react-icons/ri';
 import { RepeatIcon } from '@chakra-ui/icons'
 
-export const TableActions = () => {
-  const syncData = () => {
+import { fetchFormData } from '../hooks/useTypeForm';
 
-  }
+export const TableActions = (props) => {
+  const toast = useToast();
 
   return (
     <Stack spacing="4" direction={{ base: 'column', md: 'row' }} m={5} justify="space-between">
@@ -27,7 +27,10 @@ export const TableActions = () => {
         </Select>
       </HStack>
       <ButtonGroup size="sm" variant="outline">
-        <Button iconSpacing="1" leftIcon={<RepeatIcon fontSize="1.25em" />}>
+        <Button
+          iconSpacing="1"
+          leftIcon={<RepeatIcon fontSize="1.25em"/>}
+          onClick={() => fetchFormData(props.typeFormData)}>
           re-sync
         </Button>
         <Button iconSpacing="1" leftIcon={<RiArrowRightUpLine fontSize="1.25em" />}>
