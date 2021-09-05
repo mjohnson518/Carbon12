@@ -56,6 +56,8 @@ npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 
 - [ERC-998 -- Composable Non-Fungible Token Standard](https://eips.ethereum.org/EIPS/eip-998): An extension of the ERC-721 standard to enable ERC721 tokens to own other ERC721 tokens and ERC20 tokens.
 
+- [ERC-721 Standard Extension](https://github.com/ethereum/EIPs/pull/3551/commits/cc3a2725ad7cdc24f717cfb2c4e72fc48cc03b28): Ernest & Young EIP draft specifying how location metadata should be represented in an ERC-721 token
+
 - [Energy Web DID Registry](https://github.com/energywebfoundation/ew-did-registry): the EW-DID library implementation confirms to the requirements specified in the DID Specification published by the W3C Credential Community Group.
 
 - [Energy Web IAM Client Examples](https://github.com/energywebfoundation/iam-client-examples): repo containing client examples which leverage the iam-client-lib and communicate with a hosted backend to authenticate and authorize a user using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
