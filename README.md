@@ -50,3 +50,14 @@ Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_
 ```shell
 npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 ```
+
+
+# Resources
+
+- [ERC-998 -- Composable Non-Fungible Token Standard](https://eips.ethereum.org/EIPS/eip-998): An extension of the ERC-721 standard to enable ERC721 tokens to own other ERC721 tokens and ERC20 tokens.
+
+- [Energy Web DID Registry](https://github.com/energywebfoundation/ew-did-registry): the EW-DID library implementation confirms to the requirements specified in the DID Specification published by the W3C Credential Community Group.
+
+- [Energy Web IAM Client Examples](https://github.com/energywebfoundation/iam-client-examples): repo containing client examples which leverage the iam-client-lib and communicate with a hosted backend to authenticate and authorize a user using DIDs (Decentralized Identifiers) and VCs (Verifiable Credentials)
+
+- [IPFS TalentTree Repo](https://github.com/Dan-Nolan/TalentTreeIPFS): Dan's repo with example code for uploading JSON Objects to IPFS via the `dag` API.
