@@ -4,7 +4,7 @@
 
 2. start hardhat with `yarn chain`
 
-3. start react with yarn start
+3. start react with `yarn start`
 
 4. run `yarn deploy` - this will deploy the contracts to the local chain, you should see them in your hardhat logs.
 
