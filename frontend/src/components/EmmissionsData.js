@@ -1,5 +1,5 @@
-import React from "react";
-const { create } = require("ipfs-http-client");
+import React from 'react';
+const { create } = require('ipfs-http-client');
 
 const client = create();
 
@@ -104,5 +104,7 @@ export async function emmissionsData() {
       },
     },
   };
-  const carbonForm = await client.dag.put(form);
+  const carbonForm = await client.add(form);
+  console.info(carbonForm);
+  return carbonForm;
 }

@@ -2,15 +2,13 @@ const { create } = require("ipfs-http-client");
 
 const ipfs = create("https://ipfs.infura.io:5001");
 
-async function run() {
+async function upload() {
   const files = [
     {
       path: "/",
       content: JSON.stringify({
         name: "CarbonTracker",
-        attributes: [
-          {
-            general: {
+           general: [{
               companyName: {
                 /*input from form*/
               },
@@ -44,8 +42,7 @@ async function run() {
               globalWarmingFactors: {
                 /*global warming potential factors derived from IPCC Assessment Report "AR 5"*/
               },
-            },
-          },
+            },          
         ],
         // if you want to upload your own IPFS image, you can do so here:
         // https://github.com/ChainShot/IPFS-Upload
@@ -56,7 +53,7 @@ async function run() {
   ];
 
   const result = await ipfs.add(files);
-  console.log(result);
+  return result;
 }
 
-run();
+upload();
