@@ -1,37 +1,33 @@
-import React, {  useEffect, useState, useToast } from 'react'
-import axios from "axios";
+import { useToast } from '@chakra-ui/react';
 
-export const useTypeForm = () => {
-  const toast = useToast()
+import React, { useEffect, useState } from 'react';
 
-  const [typeFormData, setTypeFormData] = useState(() => {
-    const saved = localStorage.getItem("typeFormData");
-    const initialValue = JSON.parse(saved);
-    return initialValue || "";
-  });
-
-  useEffect(() => {
-    // curl --request GET \
-    //   --url https://api.typeform.com/me \
-    //   --header 'Authorization: Bearer {your_access_token}'
-    axios.get('https://api.typeform.com/me')
-      .then((response) => setTypeFormData(response))
-      .catch((error) => {
-        toast({
-          title: `error recieved: ${error.message}`,
-          status: 'error',
-          isClosable: true,
-        });
-
-        setTypeFormData(typeFormData || {})
-      })
-      .then(() => {
-        localStorage.setItem("typeFormData", JSON.stringify(typeFormData));
-      });
-  }, [typeFormData, setTypeFormData]);
-
-  return {
-    typeFormData,
-    setTypeFormData,
-  }
+function isEmpty(obj) {
+  return Array.from(obj).length === 0;
 }
+
+// export const useTypeForm = () => {
+//   const toast = useToast()
+
+//   const [typeFormData, setTypeFormData] = useState(() => {
+//     const saved = getFormData();
+//     const initialValue = saved || [];
+//     return initialValue;
+//   });
+
+//   useEffect(() => {
+//     const localFormEmpty = isEmpty(typeFormData);
+
+//     if (localFormEmpty) {
+//       const data = fetchFormData(typeFormData);
+
+//       setTypeFormData(data);
+//     }
+//   }, [
+//     typeFormData,
+//     setTypeFormData,
+//     toast
+//   ]);
+
+//   return typeFormData;
+// }

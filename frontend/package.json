@@ -12,6 +12,8 @@
     "@testing-library/user-event": "^12.0.2",
     "axios": "^0.21.3",
     "framer-motion": "^4.0.0",
+    "http-proxy-middleware": "^2.0.1",
+    "lodash": "^4.17.21",
     "postscribe": "^2.0.8",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -25,6 +27,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "https://api.typeform.com",
   "eslintConfig": {
     "extends": "react-app"
   },
