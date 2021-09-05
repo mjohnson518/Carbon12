@@ -1,47 +1,13 @@
-import {
-  Button,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useColorModeValue as mode,
-} from '@chakra-ui/react'
-import * as React from 'react'
-import { columns } from './_data'
+import { Button, Table, Tbody, Td, Th, Thead, Tr, useColorModeValue as mode } from '@chakra-ui/react';
+import { create } from 'ipfs-http-client';
+import * as React from 'react';
 
-import flatten from 'lodash/flatten'
-
-import  { create } from "ipfs-http-client";
-
-import { getFormData } from "../hooks/useTypeForm"
-import { handleTypeFormField } from './typeform'
+import { columns, getFormData, handleTypeFormField } from './typeform';
 
 export const TableContent = (props) => {
   const client = create();
   const forms = getFormData() || [];
   const formAnswers = forms.map((form) => form.answers);
-
-  const tableRows = formAnswers.map((answers, index) => (
-    <Tr key={index}>
-      {columns.map((column, index) => {
-        const item = answers.find((col) => col.field.ref === column.accessor);
-        const cell = item ? handleTypeFormField(item) : 'N/A';
-        {/* const element = column.Cell?.(cell) ?? cell */}
-        return (
-          <Td whiteSpace="nowrap" key={index}>
-            {cell}
-          </Td>
-        )
-      })}
-      <Td textAlign="right">
-        <Button size="sm" colorScheme="teal" onClick={ async () => uploadToIPFS(answers) }>
-          Mint
-        </Button>
-      </Td>
-    </Tr>
-  ))
 
   async function uploadToIPFS(questionaire) {
     // manipulate questionaire data
@@ -70,7 +36,28 @@ export const TableContent = (props) => {
         </Tr>
       </Thead>
       <Tbody>
-        { tableRows }
+        {
+          formAnswers.map((answers, index) => (
+            <Tr key={index}>
+              { columns.map((column, index) => {
+                  const item = answers.find((col) => col.field.ref === column.accessor);
+                  const cell = item ? handleTypeFormField(item) : 'N/A';
+
+                  return (
+                    <Td whiteSpace="nowrap" key={index}>
+                      {cell}
+                    </Td>
+                  )
+                })
+              }
+              <Td textAlign="right">
+                <Button size="sm" colorScheme="teal" onClick={ async () => uploadToIPFS(answers) }>
+                  Mint
+                </Button>
+              </Td>
+            </Tr>
+          ))
+        }
       </Tbody>
     </Table>
   )

@@ -1,12 +1,36 @@
+import { RepeatIcon } from '@chakra-ui/icons';
 import { Button, ButtonGroup, HStack, Select, Stack, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { RiArrowRightUpLine } from 'react-icons/ri';
-import { RepeatIcon } from '@chakra-ui/icons'
 
-import { fetchFormData } from '../hooks/useTypeForm';
+import { fetchFormData } from './typeform';
 
 export const TableActions = (props) => {
   const toast = useToast();
+
+  function handleFormData() {
+    toast({
+      title: "resyncing table data...",
+      status: 'info',
+      isClosable: true,
+    })
+
+    fetchFormData()
+      .then((_) => {
+        toast({
+          title: "table data resynced",
+          status: 'success',
+          isClosable: true,
+        })
+      })
+      .catch((error) => {
+        toast({
+          title: `error resyncing the table data - ${error}`,
+          status: 'error',
+          isClosable: true,
+        })
+      })
+  }
 
   return (
     <Stack spacing="4" direction={{ base: 'column', md: 'row' }} m={5} justify="space-between">
@@ -30,7 +54,7 @@ export const TableActions = (props) => {
         <Button
           iconSpacing="1"
           leftIcon={<RepeatIcon fontSize="1.25em"/>}
-          onClick={() => fetchFormData(props.typeFormData)}>
+          onClick={() => handleFormData()}>
           re-sync
         </Button>
         <Button iconSpacing="1" leftIcon={<RiArrowRightUpLine fontSize="1.25em" />}>

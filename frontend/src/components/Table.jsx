@@ -5,14 +5,38 @@ import { TableContent } from './Table/TableContent';
 import { TablePagination } from './Table/TablePagination';
 
 import { PROJECT_NAME } from '../constants';
-import { fetchFormData, getFormData } from './hooks/useTypeForm';
+import { getFormData, fetchFormData } from './Table/typeform'
 
-const typeFormData = getFormData() || [];
-
-const data = typeFormData.length === 0 ? fetchFormData(typeFormData) : typeFormData;
 
 export const Table = () => {
   const toast = useToast();
+
+  let typeFormData = (getFormData() || []);
+
+  if (typeFormData.length === 0) {
+    toast({
+      title: "fetching table data...",
+      status: 'info',
+      isClosable: true,
+    })
+
+    fetchFormData()
+      .then((response) => {
+        typeFormData = response;
+        toast({
+          title: "table data set",
+          status: 'info',
+          isClosable: true,
+        })
+      })
+      .catch((error) => {
+        toast({
+          title: `error fetching table data - ${error}`,
+          status: 'error',
+          isClosable: true,
+        })
+      })
+  }
 
   return (
     <Box as="section" py="12">
@@ -21,9 +45,9 @@ export const Table = () => {
           <Heading size="lg" mb="6">
             { PROJECT_NAME } Questionaires
           </Heading>
-          <TableActions typeFormData={data} />
-          <TableContent typeFormData={data} />
-          <TablePagination typeFormData={data} />
+          <TableActions typeFormData={typeFormData} />
+          <TableContent typeFormData={typeFormData} />
+          <TablePagination typeFormData={typeFormData} />
         </Box>
       </Box>
     </Box>
