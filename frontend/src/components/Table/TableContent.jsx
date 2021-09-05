@@ -37,8 +37,8 @@ export const TableContent = () => {
               )
             })}
             <Td textAlign="right">
-              <Button variant="link" colorScheme="blue">
-                Edit
+              <Button size="sm" colorScheme="teal">
+                Mint
               </Button>
             </Td>
           </Tr>

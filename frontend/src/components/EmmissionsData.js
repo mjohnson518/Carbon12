@@ -62,7 +62,7 @@ export async function emmissionsData() {
       secondaryDataSources: {
         /*secondary data sources used and the information which life cycle stages the sources were used for*/
       },
-      timePeriod1: {
+      timePeriod: {
         /*time period of data collection of both primary and secondary data sources*/
       },
       temporalRepresentativeness: {
@@ -91,7 +91,7 @@ export async function emmissionsData() {
       },
     },
     allocation: {
-      standards1: {
+      standards: {
         /*input from form*/
       },
       recycledMaterialAllocation: {
