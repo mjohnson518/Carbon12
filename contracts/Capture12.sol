@@ -15,12 +15,7 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
 
     Counters.Counter private _tokenIdCounter;
 
-    address private ipfsUri;
-    
-
-    constructor(address _ipfsUri) ERC721("Capture12", "C12") {
-        ipfsUri = _ipfsUri;
-    }
+    constructor() ERC721("Capture12", "C12") {}
 
     function pause() public onlyOwner {
         _pause();
@@ -30,8 +25,12 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         _unpause();
     }
 
-    function safeMint(address to) public onlyOwner {
-        _safeMint(to, _tokenIdCounter.current());
+    function safeMint(address to, string calldata _ipfsUri) public onlyOwner {
+        uint256 tokenId = _tokenIdCounter.current();
+
+        // require(_ipfsURI == whitelisted, "we should add some logic to whitelist this or something maybe?");
+        _setTokenURI(tokenId, _ipfsUri);
+        _safeMint(to, tokenId);
         _tokenIdCounter.increment();
     }
 
