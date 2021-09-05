@@ -1,20 +1,13 @@
-import {
-  Button,
-  ButtonGroup,
-  FormControl,
-  FormLabel,
-  HStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Select,
-  Stack,
-} from '@chakra-ui/react'
-import * as React from 'react'
-import { BsSearch } from 'react-icons/bs'
-import { RiAddFill, RiArrowRightUpLine } from 'react-icons/ri'
+import { Button, ButtonGroup, HStack, Select, Stack } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { RiArrowRightUpLine } from 'react-icons/ri';
+import { RepeatIcon } from '@chakra-ui/icons'
 
 export const TableActions = () => {
+  const syncData = () => {
+
+  }
+
   return (
     <Stack spacing="4" direction={{ base: 'column', md: 'row' }} m={5} justify="space-between">
       <HStack>
@@ -34,9 +27,9 @@ export const TableActions = () => {
         </Select>
       </HStack>
       <ButtonGroup size="sm" variant="outline">
-        {/* <Button iconSpacing="1" leftIcon={<RiAddFill fontSize="1.25em" />}>
-          New member
-        </Button> */}
+        <Button iconSpacing="1" leftIcon={<RepeatIcon fontSize="1.25em" />}>
+          re-sync
+        </Button>
         <Button iconSpacing="1" leftIcon={<RiArrowRightUpLine fontSize="1.25em" />}>
           Export CSV
         </Button>
