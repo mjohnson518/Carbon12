@@ -23,3 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 src/contracts/*
+
+.env
+.env.template

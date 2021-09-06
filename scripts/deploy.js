@@ -45,7 +45,6 @@ async function main() {
   await capture12NFT.deployed();
 
   console.log("Capture12 deployed to:", capture12NFT.address);
-  console.log("Capture12 deployed to:", capture12NFT.address);
 
   await hre.storageLayout.export();
 
