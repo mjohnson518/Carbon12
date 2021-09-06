@@ -9,19 +9,19 @@ import {
   Text,
   useMenuButton,
   useColorModeValue as mode,
-} from '@chakra-ui/react'
-import * as React from 'react'
+} from '@chakra-ui/react';
+import * as React from 'react';
 
-const UserAvatar = () => (
-  <Avatar
-    size="sm"
-    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-    name="Manny Brooke"
-  />
-)
+// const UserAvatar = () => (
+//   <Avatar
+//     size="sm"
+//     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+//     name="Manny Brooke"
+//   />
+// )
 
-const ProfileMenuButton = (props) => {
-  const buttonProps = useMenuButton(props)
+const ProfileMenuButton = props => {
+  const buttonProps = useMenuButton(props);
   return (
     <Flex
       {...buttonProps}
@@ -34,17 +34,23 @@ const ProfileMenuButton = (props) => {
       }}
     >
       <Box srOnly>Open user menu</Box>
-      <UserAvatar />
+      {/* <UserAvatar /> */}
     </Flex>
-  )
-}
+  );
+};
 
 export const ProfileDropdown = () => (
   <Menu>
     <ProfileMenuButton />
-    <MenuList rounded="md" shadow="lg" py="1" color={mode('gray.600', 'inherit')} fontSize="sm">
+    <MenuList
+      rounded="md"
+      shadow="lg"
+      py="1"
+      color={mode('gray.600', 'inherit')}
+      fontSize="sm"
+    >
       <HStack px="3" py="4">
-        <UserAvatar />
+        {/* <UserAvatar /> */}
         <Box lineHeight="1">
           <Text fontWeight="semibold">Manny Broke</Text>
           <Text mt="1" fontSize="xs" color="gray.500">
@@ -60,4 +66,4 @@ export const ProfileDropdown = () => (
       </MenuItem>
     </MenuList>
   </Menu>
-)
+);
