@@ -1,9 +1,15 @@
 import React from 'react';
+import { handleTypeFormField, getFormByID } from './Table/typeform.js';
 const { create } = require('ipfs-http-client');
 
 const client = create();
+export async function getTypeform() {
+  const formData = await getFormByID(0);
+  const handledData = handleTypeFormField(formData);
+}
+let formArray = [];
 
-export async function emmissionsData() {
+export async function emmissionsData(answersObj) {
   const form = {
     general: {
       companyName: {
@@ -105,6 +111,6 @@ export async function emmissionsData() {
     },
   };
   const carbonForm = await client.add(form);
-  console.info(carbonForm);
+  console.info('TYPEFORM DATA', carbonForm);
   return carbonForm;
 }

@@ -1,6 +1,7 @@
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '@chakra-ui/react';
 import axios from 'axios';
-import * as React from 'react'
+
+import * as React from 'react';
 
 const POTENTIAL_KEYS = [
   'text',
@@ -13,13 +14,13 @@ const POTENTIAL_KEYS = [
   'number',
   'date',
   'payment',
-]
+];
 
 const badgeEnum = {
   active: 'green',
   reviewing: 'orange',
   declined: 'red',
-}
+};
 
 // {
 //   accessor: "primaryDataShare",
@@ -36,67 +37,101 @@ const badgeEnum = {
 
 export const columns = [
   {
-    accessor: "companyName",
-    Header: "Company Name",
+    accessor: 'companyName',
+    Header: 'Company Name',
   },
   {
-    accessor: "productName",
-    Header: "Product Name",
+    accessor: 'productName',
+    Header: 'Product Name',
   },
 
   {
-    accessor: "systemBoundary",
-    Header: "System Boundary",
+    accessor: 'systemBoundary',
+    Header: 'System Boundary',
   },
   {
-    accessor: "timePeriod",
-    Header: "Time Period",
+    accessor: 'timePeriod',
+    Header: 'Time Period',
   },
   {
-    accessor: "standards",
-    Header: "Standards",
+    accessor: 'standards',
+    Header: 'Standards',
   },
   {
-    accessor: "status",
-    Header: "Status",
+    accessor: 'status',
+    Header: 'Status',
     Cell: function StatusCell(data) {
       return (
         <Badge fontSize="xs" colorScheme={badgeEnum[data]}>
           {data}
         </Badge>
-      )
+      );
     },
   },
-]
+];
+
+export function getFormByID(storageArrayPosition) {
+  const localArray = JSON.parse(localStorage.getItem('typeFormData')) || [];
+  return localArray[storageArrayPosition];
+}
 
 export function handleTypeFormField(item) {
-  const attributeKey = Object.keys(item).find((key) => POTENTIAL_KEYS.includes(key))
+  const attributeKey = Object.keys(item).find(key =>
+    POTENTIAL_KEYS.includes(key)
+  );
 
   return item[attributeKey] || 'N/A';
 }
 
+export function parseAnswers(answers) {
+  return answers.reduce((obj, answer) => {
+    obj[answer.field.ref] = handleTypeFormField(answer);
+
+    return obj;
+  }, {});
+}
+
 export function getFormData() {
-  return JSON.parse(localStorage.getItem("typeFormData")) || [];
+  return JSON.parse(localStorage.getItem('typeFormData')) || [];
 }
 
 export function fetchFormData() {
-  return axios.get("/forms/t4Wsz3R9/responses", {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${process.env.REACT_APP_TYPEFORM_PERSONAL_TOKEN}`,
-      "Content-Type": "application/json",
-    }
-  })
-  .then((response) => {
-    const storage = response.data && response.data.items ? Array.from(response.data.items) : [];
-    localStorage.setItem("typeFormData", JSON.stringify(storage));
-    return response;
-  })
-  .catch((error) => {
-    return error;
-  })
-  .then((response) => {
-    return response;
-  });
+  return axios
+    .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${process.env.REACT_APP_TYPEFORM_PERSONAL_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      const storage =
+        response.data && response.data.items
+          ? Array.from(response.data.items)
+          : [];
+      localStorage.setItem('typeFormData', JSON.stringify(storage));
+      return response;
+    })
+    .catch(error => {
+      return error;
+    })
+    .then(response => {
+      return response;
+    });
 }
 
+async function uploadToIPFS(formID) {
+  // manipulate questionaire data
+  const form = getFormByID(formID);
+  const answersObj = parseAnswers(form.answers);
+  // check if questionaire has already been minted
+  console.log(answersObj);
+  // create ipfs link
+  // const carbonForm = await client.add(answersObj);
+  // console.log(carbonForm);
+  // manipulate data post questionaire upload to ipfs
+
+  // store questionaire in localstorage
+}
+
+uploadToIPFS(0);
