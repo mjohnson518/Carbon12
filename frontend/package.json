@@ -27,8 +27,8 @@
     "web-vitals": "^0.2.2"
   },
   "scripts": {
-    "start": "concurrently \"yarn start-server\" \"yarn start-with-logs\"",
-    "start-with-logs": "FORCE_COLOR=true yarn react-scripts:start | cat",
+    "start": "concurrently \"yarn start-server\" && \"yarn start-with-logs\"",
+    "start-with-logs": "yarn react-scripts:start | cat",
     "start-server": "nodemon server.js",
     "react-scripts:start": "react-scripts start",
     "build": "react-scripts build",
