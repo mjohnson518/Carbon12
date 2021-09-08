@@ -37,10 +37,17 @@ export const TableContent = props => {
       mode: 'string',
       mtime: Date.now(),
     });
-    const carbonForm = await ipfs.add(ipfsData, (err, resp) => {
-      console.log(err);
-      console.log(resp);
-    });
+    try {
+      const carbonForm = await ipfs
+        .add(ipfsData, (err, resp) => {
+          console.log(err);
+          console.log(resp);
+        })
+        .then(res => {});
+    } catch (err) {
+      console.error(err);
+    }
+
     // manipulate data post questionaire upload to ipfs
 
     // store questionaire in localstorage

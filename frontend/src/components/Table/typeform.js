@@ -119,19 +119,3 @@ export function fetchFormData() {
       return response;
     });
 }
-
-async function uploadToIPFS(formID) {
-  // manipulate questionaire data
-  const form = getFormByID(formID);
-  const answersObj = parseAnswers(form.answers);
-  // check if questionaire has already been minted
-  console.log(answersObj);
-  // create ipfs link
-  // const carbonForm = await client.add(answersObj);
-  // console.log(carbonForm);
-  // manipulate data post questionaire upload to ipfs
-
-  // store questionaire in localstorage
-}
-
-uploadToIPFS(0);
