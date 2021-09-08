@@ -15,21 +15,7 @@ export const TableActions = (props) => {
       isClosable: true,
     })
 
-    fetchFormData()
-      .then((_) => {
-        toast({
-          title: "table data resynced",
-          status: 'success',
-          isClosable: true,
-        })
-      })
-      .catch((error) => {
-        toast({
-          title: `error resyncing the table data - ${error}`,
-          status: 'error',
-          isClosable: true,
-        })
-      })
+    fetchFormData(toast)
   }
 
   return (
