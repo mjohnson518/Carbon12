@@ -81,14 +81,6 @@ export function handleTypeFormField(item) {
   return item[attributeKey] || 'N/A';
 }
 
-export function parseAnswers(answers) {
-  return answers.reduce((obj, answer) => {
-    obj[answer.field.ref] = handleTypeFormField(answer);
-
-    return obj;
-  }, {});
-}
-
 export function getFormData() {
   return JSON.parse(localStorage.getItem('typeFormData')) || [];
 }
