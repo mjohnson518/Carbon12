@@ -369,4 +369,3 @@ export class Dapp extends React.Component {
     return false;
   }
 }
-getTypeform();
