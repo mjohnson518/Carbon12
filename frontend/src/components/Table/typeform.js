@@ -22,19 +22,6 @@ const badgeEnum = {
   declined: 'red',
 };
 
-// {
-//   accessor: "primaryDataShare",
-//   Header: "Primary Data Share",
-// },
-// {
-//   accessor: "dataCollectionMethod",
-//   Header: "Data Collection Method",
-// },
-// {
-//   accessor: "productPCF",
-//   Header: "Product PCF",
-// },
-
 export const columns = [
   {
     accessor: 'companyName',
@@ -75,6 +62,17 @@ export function getFormByID(storageArrayPosition) {
   return localArray[storageArrayPosition];
 }
 
+export function parseAnswers(answers) {
+  return answers.reduce(
+    (obj, answer) => {
+      obj[answer.field.ref] = handleTypeFormField(answer)
+
+      return obj;
+    },
+    {}
+  );
+}
+
 export function handleTypeFormField(item) {
   const attributeKey = Object.keys(item).find(key =>
     POTENTIAL_KEYS.includes(key)
@@ -95,27 +93,35 @@ export function getFormData() {
   return JSON.parse(localStorage.getItem('typeFormData')) || [];
 }
 
-export function fetchFormData() {
-  return axios
-    .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${process.env.REACT_APP_TYPEFORM_PERSONAL_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
+export function fetchFormData(toast) {
+  const cancelTokenSource = axios.CancelToken.source();
+
+  return axios.get("/typeform", { cancelToken: cancelTokenSource.token })
+    .then((response) => {
+      const storage = response.data && response.data.items ? Array.from(response.data.items) : [];
+      localStorage.setItem("typeFormData", JSON.stringify(storage));
+
+      toast({
+        title: `sync returned ${storage.length} questionaires`,
+        status: 'success',
+        isClosable: true,
+      })
+
+      cancelTokenSource.cancel();
+
+      return getFormData();
     })
-    .then(response => {
-      const storage =
-        response.data && response.data.items
-          ? Array.from(response.data.items)
-          : [];
-      localStorage.setItem('typeFormData', JSON.stringify(storage));
-      return response;
+    .catch((error) => {
+      toast({
+        title: `re-syncing errored: ${error.message}`,
+        status: 'error',
+        isClosable: true,
+      })
+
+      localStorage.setItem("typeFormData", JSON.stringify([]));
+
+      cancelTokenSource.cancel();
+
+      return getFormData();
     })
-    .catch(error => {
-      return error;
-    })
-    .then(response => {
-      return response;
-    });
 }

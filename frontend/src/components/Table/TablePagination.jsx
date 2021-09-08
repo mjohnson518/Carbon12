@@ -6,7 +6,7 @@ export const TablePagination = ({typeFormData, ...props}) => {
   return (
     <Flex align="center" justify="space-between" m={5}>
       <Text color={mode('gray.600', 'gray.400')} fontSize="sm">
-        {typeFormData?.length || 'NA'} members
+        {typeFormData?.length || 0} members
       </Text>
       <ButtonGroup variant="outline" size="sm">
         <Button as="a" rel="prev">
