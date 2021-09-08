@@ -1,7 +1,6 @@
-import { Badge } from '@chakra-ui/react';
+import { Badge } from '@chakra-ui/react'
 import axios from 'axios';
-
-import * as React from 'react';
+import * as React from 'react'
 
 const POTENTIAL_KEYS = [
   'text',
@@ -14,53 +13,48 @@ const POTENTIAL_KEYS = [
   'number',
   'date',
   'payment',
-];
+]
 
 const badgeEnum = {
   active: 'green',
   reviewing: 'orange',
   declined: 'red',
-};
+}
 
 export const columns = [
   {
-    accessor: 'companyName',
-    Header: 'Company Name',
+    accessor: "companyName",
+    Header: "Company Name",
   },
   {
-    accessor: 'productName',
-    Header: 'Product Name',
+    accessor: "productName",
+    Header: "Product Name",
   },
 
   {
-    accessor: 'systemBoundary',
-    Header: 'System Boundary',
+    accessor: "systemBoundary",
+    Header: "System Boundary",
   },
   {
-    accessor: 'timePeriod',
-    Header: 'Time Period',
+    accessor: "timePeriod",
+    Header: "Time Period",
   },
   {
-    accessor: 'standards',
-    Header: 'Standards',
+    accessor: "standards",
+    Header: "Standards",
   },
   {
-    accessor: 'status',
-    Header: 'Status',
+    accessor: "status",
+    Header: "Status",
     Cell: function StatusCell(data) {
       return (
         <Badge fontSize="xs" colorScheme={badgeEnum[data]}>
           {data}
         </Badge>
-      );
+      )
     },
   },
-];
-
-export function getFormByID(storageArrayPosition) {
-  const localArray = JSON.parse(localStorage.getItem('typeFormData')) || [];
-  return localArray[storageArrayPosition];
-}
+]
 
 export function parseAnswers(answers) {
   return answers.reduce(
@@ -74,23 +68,13 @@ export function parseAnswers(answers) {
 }
 
 export function handleTypeFormField(item) {
-  const attributeKey = Object.keys(item).find(key =>
-    POTENTIAL_KEYS.includes(key)
-  );
+  const attributeKey = Object.keys(item).find((key) => POTENTIAL_KEYS.includes(key))
 
   return item[attributeKey] || 'N/A';
 }
 
-export function parseAnswers(answers) {
-  return answers.reduce((obj, answer) => {
-    obj[answer.field.ref] = handleTypeFormField(answer);
-
-    return obj;
-  }, {});
-}
-
 export function getFormData() {
-  return JSON.parse(localStorage.getItem('typeFormData')) || [];
+  return JSON.parse(localStorage.getItem("typeFormData")) || [];
 }
 
 export function fetchFormData(toast) {
@@ -125,3 +109,4 @@ export function fetchFormData(toast) {
       return getFormData();
     })
 }
+

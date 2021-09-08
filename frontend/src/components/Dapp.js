@@ -21,12 +21,11 @@ import { WaitingForTransactionMessage } from './WaitingForTransactionMessage';
 import { NoTokensMessage } from './NoTokensMessage';
 import { Logo } from './Logo';
 import { Table } from '../components/Table';
-import { getTypeform } from './EmmissionsData';
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
 // to use when deploying to other networks.
-console.log(process.env.REACT_APP_HARDHAT_NETWORK_ID);
+console.log(process.env.REACT_APP_HARDHAT_NETWORK_ID)
 
 const HARDHAT_NETWORK_ID = process.env.REACT_APP_HARDHAT_NETWORK_ID;
 
@@ -356,8 +355,8 @@ export class Dapp extends React.Component {
 
   // This method checks if Metamask selected network is Localhost:8545
   _checkNetwork() {
-    console.log(`ethereum network version: ${window.ethereum.networkVersion}`);
-    console.log(`HARDHAT NETWORK ID: ${HARDHAT_NETWORK_ID}`);
+    console.log(`ethereum network version: ${window.ethereum.networkVersion}`)
+    console.log(`HARDHAT NETWORK ID: ${HARDHAT_NETWORK_ID}`)
     if (window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
       return true;
     }
@@ -369,4 +368,3 @@ export class Dapp extends React.Component {
     return false;
   }
 }
-getTypeform();
