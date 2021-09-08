@@ -1,6 +1,5 @@
 import { Box, Heading, useToast } from '@chakra-ui/react';
 import * as React from 'react';
-
 import { useEffect, useState } from 'react';
 
 import { PROJECT_NAME } from '../constants';
@@ -8,6 +7,7 @@ import { TableActions } from './Table/TableActions';
 import { TableContent } from './Table/TableContent';
 import { TablePagination } from './Table/TablePagination';
 import { fetchFormData, getFormData } from './Table/typeform';
+
 
 export const Table = () => {
   const toast = useToast();
@@ -26,7 +26,8 @@ export const Table = () => {
         .then((formData) => setTypeFormData(formData))
         .catch((error) => console.log(error))
     }
-  }, [ toast, typeFormData ])
+  }, [ toast, typeFormData ]
+  )
 
   return (
     <Box as="section" py="12">
@@ -41,5 +42,5 @@ export const Table = () => {
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
