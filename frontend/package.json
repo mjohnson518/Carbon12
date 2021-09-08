@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://[::1]:3001",
   "dependencies": {
     "@chakra-ui/icons": "^1.0.15",
     "@chakra-ui/react": "^1.0.0",
@@ -11,9 +12,12 @@
     "@testing-library/react": "^10.2.1",
     "@testing-library/user-event": "^12.0.2",
     "axios": "^0.21.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "framer-motion": "^4.0.0",
     "http-proxy-middleware": "^2.0.1",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "postscribe": "^2.0.8",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -22,12 +26,14 @@
     "web-vitals": "^0.2.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"yarn start-server\" \"yarn start-with-logs\"",
+    "start-with-logs": "FORCE_COLOR=true yarn react-scripts:start | cat",
+    "start-server": "nodemon server.js",
+    "react-scripts:start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://api.typeform.com",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -42,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }

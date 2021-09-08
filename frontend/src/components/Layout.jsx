@@ -31,7 +31,7 @@ export const Layout = ({children}) => {
           {/* Mobile Logo placement */}
           {/* <Logo flex={{ base: '1', lg: '0' }} display={{ lg: 'none' }} flexShrink={0} h="5" /> */}
           {/* FOR DEMO PURPOSES RIGHT NOW - HOW TO TOAST */}
-          <Wrap m={5}>
+          {/* <Wrap m={5}>
             {STATUSES.map((status, i) => (
               <WrapItem key={i}>
                 <Button
@@ -49,7 +49,7 @@ export const Layout = ({children}) => {
                 </Button>
               </WrapItem>
             ))}
-          </Wrap>
+          </Wrap> */}
 
           <HStack spacing="3" flex-direction="row-reverse">
             <ColorModeSwitcher justifySelf="flex-end" color={mode('gray.500', 'gray.500')} />
