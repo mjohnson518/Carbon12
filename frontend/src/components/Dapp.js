@@ -100,16 +100,16 @@ export class Dapp extends React.Component {
         <Logo bodyLogo="true" />
         <TypeFormIFrame />
         <Container maxW="container.xl" centerContent>
-          <Heading as="h1">
+          {/* <Heading as="h1">
             {this.state.tokenData.name} ({this.state.tokenData.symbol})
-          </Heading>
-          <Text>
+          </Heading> */}
+          {/* <Text>
             Welcome <b>{this.state.selectedAddress}</b>, you have{' '}
             <b>
               {this.state.balance.toString()} {this.state.tokenData.symbol}
             </b>
             .
-          </Text>
+          </Text> */}
         </Container>
 
         <Container maxW="container.xl" centerContent>
@@ -138,9 +138,9 @@ export class Dapp extends React.Component {
           {/*
             If the user has no tokens, we don't show the Tranfer form
           */}
-          {this.state.balance.eq(0) && (
+          {/* {this.state.balance.eq(0) && (
             <NoTokensMessage selectedAddress={this.state.selectedAddress} />
-          )}
+          )} */}
 
           {/*
             This component displays a form that the user can use to send a
@@ -148,12 +148,12 @@ export class Dapp extends React.Component {
             The component doesn't have logic, it just calls the transferTokens
             callback.
           */}
-          {this.state.balance.gt(0) && (
+          {/* {this.state.balance.gt(0) && (
             <Transfer
               transferTokens={(to, amount) => this._transferTokens(to, amount)}
               tokenSymbol={this.state.tokenData.symbol}
             />
-          )}
+          )} */}
         </Container>
 
         <Table />
