@@ -12,6 +12,7 @@
     "@testing-library/react": "^10.2.1",
     "@testing-library/user-event": "^12.0.2",
     "axios": "^0.21.3",
+    "concurrently": "^6.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "framer-motion": "^4.0.0",
@@ -26,8 +27,8 @@
     "web-vitals": "^0.2.2"
   },
   "scripts": {
-    "start": "concurrently \"yarn start-server\" \"yarn start-with-logs\"",
-    "start-with-logs": "FORCE_COLOR=true yarn react-scripts:start | cat",
+    "start": "concurrently \"yarn start-server\" && \"yarn start-with-logs\"",
+    "start-with-logs": "yarn react-scripts:start | cat",
     "start-server": "nodemon server.js",
     "react-scripts:start": "react-scripts start",
     "build": "react-scripts build",
