@@ -39,7 +39,7 @@ export const TableContent = props => {
       mode: 'string',
       mtime: Date.now(),
     });
-    debugger
+
     axios
       .post('/upload-to-ipfs', ipfsData)
       .then(res => {
