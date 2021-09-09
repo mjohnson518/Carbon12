@@ -118,3 +118,52 @@ package-lock.json
 # End of https://www.toptal.com/developers/gitignore/api/solidity,soliditytruffle,react
 
 frontend/src/contracts/*
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+frontend/node_modules
+frontend/.pnp
+.pnp.js
+*.rej
+
+# testing
+frontend/coverage
+
+# production
+frontend/build
+
+# misc
+.DS_Store
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+frontend/.env
+frontend/.env.template
+
+# Logs
+frontend/logs
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/lerna-debug.log*
+
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
