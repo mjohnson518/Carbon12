@@ -5,8 +5,8 @@ import { LinkGrid } from './Footer/LinkGrid'
 import { Logo } from './Logo'
 import { SocialMediaLinks } from './Footer/SocialMediaLinks'
 
-export const Footer = () => (
-  <Box as="footer" role="contentinfo" width="100%" minWidth="100%" p={5}>
+export const Footer = (props) => (
+  <Box as="footer" role="contentinfo" width="100%" minWidth="100%" p={5} {...props}>
     <Stack spacing="5" divider={<StackDivider />}>
       <Stack direction={{ base: 'column', lg: 'row' }} spacing={{ base: '10', lg: '28' }}>
         <Box flex="1">
