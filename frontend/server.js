@@ -39,6 +39,19 @@ function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
   });
 }
 
+function getQRCode(ipfsCID) {
+  const url = `https://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/${ipfsCID}&size=100x100`;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(url)
+      .then(response => {
+        console.log(response.data);
+        resolve(response.data);
+      })
+      .catch(err => reject(err));
+  });
+}
+
 app.get('/typeform', async (req, res) => {
   await axios
     .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
@@ -77,6 +90,9 @@ app.post('/upload-to-ipfs', async (req, res) => {
 
   const cid = new CID(response.IpfsHash).toV1().toString('base32');
   console.log('Ipfs cid', cid);
+  const qrCodeAddress = await getQRCode(cid);
+  console.log(qrCodeAddress.data);
+  res.send(cid);
 
   // manipulate data post questionaire upload to ipfs
 
