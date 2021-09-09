@@ -5,7 +5,7 @@ const http = require('http');
 const cors = require('cors');
 const axios = require('axios').default;
 const { create } = require('ipfs-http-client');
-
+const CID = require('cids');
 const path = require('path');
 const { response } = require('express');
 const { reject } = require('lodash');
@@ -63,18 +63,20 @@ app.post('/upload-to-ipfs', async (req, res) => {
   // request for create-qr-code
   const content = req.body;
 
-  const ipfsData = JSON.stringify({
+  const ipfsData = {
     path: '/',
     content: content,
     mode: 'string',
     mtime: Date.now(),
-  });
+  };
   const response = await pinJSONToIPFS(
     process.env.PINATA_API_Key,
     process.env.PINATA_API_Secret,
     ipfsData
   );
-  console.log('IpfsHash', response.IpfsHash);
+
+  const cid = new CID(response.IpfsHash).toV1().toString('base32');
+  console.log('Ipfs cid', cid);
 
   // manipulate data post questionaire upload to ipfs
 
