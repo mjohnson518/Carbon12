@@ -65,6 +65,7 @@
     "@openzeppelin/contracts": "^4.3.1",
     "framer-motion": "^4",
     "ipfs": "^0.58.3",
+    "ipfs-core": "^0.10.5",
     "ipfs-http-client": "^52.0.2"
   }
 }

@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import { create } from 'ipfs-http-client';
 import * as React from 'react';
+import { useState } from 'react';
 
 import {
   columns,
@@ -24,9 +25,12 @@ export const TableContent = props => {
   const forms = getFormData() || [];
   const formAnswers = forms.map(form => form.answers);
 
-  async function uploadToIPFS(questionaire) {
+  const [ipfsURI, setIpfsURI] = useState({})
+
+  function uploadToIPFS(questionaire) {
     // manipulate questionaire data
     const answersObj = parseAnswers(questionaire);
+
     // check if questionaire has already been minted
     // create ipfs link
     const ipfsData = JSON.stringify({
@@ -35,16 +39,18 @@ export const TableContent = props => {
       mode: 'string',
       mtime: Date.now(),
     });
-    let ipfsURI;
+    debugger
     axios
       .post('/upload-to-ipfs', ipfsData)
       .then(res => {
-        //ipfsURI = res.data;
+        // setIpfsURI(res.data);
         console.log(res);
+        // return ipfsURI;
       })
       .catch(err => {
         console.error(err);
       });
+
     // manipulate data post questionaire upload to ipfs
 
     // store questionaire in localstorage
@@ -63,8 +69,8 @@ export const TableContent = props => {
         </Tr>
       </Thead>
       <Tbody>
-        {formAnswers.map((answers, index) => (
-          <Tr key={index}>
+        {formAnswers.map((answers, i) => (
+          <Tr key={i}>
             {columns.map((column, index) => {
               const item = answers.find(
                 col => col.field.ref === column.accessor
@@ -81,7 +87,7 @@ export const TableContent = props => {
               <Button
                 size="sm"
                 colorScheme="teal"
-                onClick={async () => uploadToIPFS(answers)}
+                onClick={() => uploadToIPFS(answers)}
               >
                 Mint
               </Button>
