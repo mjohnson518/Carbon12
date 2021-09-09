@@ -4,19 +4,40 @@ const https = require('https');
 const http = require('http');
 const cors = require('cors');
 const axios = require('axios').default;
-const { create } = require('ipfs-http-client')
+const { create } = require('ipfs-http-client');
 
+const path = require('path');
+const { response } = require('express');
+const { reject } = require('lodash');
 const PORT = 3001;
 const app = express();
 
 app.use(cors());
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 const options = {};
 
 http.createServer(app).listen(80);
 https.createServer(options, app).listen(443);
 
 const IPFS_CLIENT = create();
+
+function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
+  const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
+  return new Promise((resolve, reject) => {
+    axios
+      .post(url, JSONBody, {
+        headers: {
+          pinata_api_key: pinataApiKey,
+          pinata_secret_api_key: pinataSecretApiKey,
+        },
+      })
+      .then(response => {
+        resolve(response.data);
+      })
+      .catch(err => reject(err));
+  });
+}
 
 app.get('/typeform', async (req, res) => {
   await axios
@@ -40,37 +61,24 @@ app.get('/typeform', async (req, res) => {
 
 app.post('/upload-to-ipfs', async (req, res) => {
   // request for create-qr-code
-  debugger
-  const path = req.query.path;
-  const content = req.query.content;
-  const mode = req.query.mode;
-  const mtime = req.query.mtime;
+  const content = req.body;
 
-  const ipfsData = {
-    path,
-    content,
-    mode,
-    mtime,
-  }
+  const ipfsData = JSON.stringify({
+    path: '/',
+    content: content,
+    mode: 'string',
+    mtime: Date.now(),
+  });
+  const response = await pinJSONToIPFS(
+    process.env.PINATA_API_Key,
+    process.env.PINATA_API_Secret,
+    ipfsData
+  );
+  console.log('IpfsHash', response.IpfsHash);
 
-  console.log('server ping');
-  async function uploadToIPFS(questionaire) {
+  // manipulate data post questionaire upload to ipfs
 
-    await IPFS_CLIENT
-      .add(ipfsData) // @ts-ignore
-      .then(resp => {
-        return res.status(res.statusCode).json(resp.data);
-      })
-      .catch(err => {
-        return res
-          .status(res.statusCode)
-          .json({ success: false, message: error.message });
-      });
-
-    // manipulate data post questionaire upload to ipfs
-
-    // store questionaire in localstorage
-  }
+  // store questionaire in localstorage
 });
 
 app.get('/read-qr-code', async (req, res) => {

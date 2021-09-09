@@ -25,11 +25,11 @@ export const TableContent = props => {
   const forms = getFormData() || [];
   const formAnswers = forms.map(form => form.answers);
 
-  const [ipfsURI, setIpfsURI] = useState({})
+  const [ipfsURI, setIpfsURI] = useState({});
 
   function uploadToIPFS(questionaire) {
     // manipulate questionaire data
-    const answersObj = parseAnswers(questionaire);
+    const answersObj = JSON.stringify(parseAnswers(questionaire));
 
     // check if questionaire has already been minted
     // create ipfs link
@@ -41,7 +41,7 @@ export const TableContent = props => {
     });
 
     axios
-      .post('/upload-to-ipfs', ipfsData)
+      .post('/upload-to-ipfs', answersObj)
       .then(res => {
         // setIpfsURI(res.data);
         console.log(res);
