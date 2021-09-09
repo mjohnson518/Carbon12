@@ -76,7 +76,12 @@ app.post('/upload-to-ipfs', async (req, res) => {
   );
 
   const cid = new CID(response.IpfsHash).toV1().toString('base32');
+
   console.log('Ipfs cid', cid);
+
+  const qrCodeAddress = `https://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/${cid}&size=100x100`;
+
+  res.json({ cid, qrCodeAddress });
 
   // manipulate data post questionaire upload to ipfs
 
