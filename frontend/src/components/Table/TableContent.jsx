@@ -26,6 +26,7 @@ export const TableContent = props => {
   const formAnswers = forms.map(form => form.answers);
 
   const [ipfsURI, setIpfsURI] = useState({});
+  const [qrCodeAddress, setqrCodeAddress] = useState({});
 
   function uploadToIPFS(questionaire) {
     // manipulate questionaire data
@@ -33,12 +34,6 @@ export const TableContent = props => {
 
     // check if questionaire has already been minted
     // create ipfs link
-    const ipfsData = JSON.stringify({
-      path: '/',
-      content: answersObj,
-      mode: 'string',
-      mtime: Date.now(),
-    });
 
     axios
       .post('/upload-to-ipfs', answersObj)
@@ -46,6 +41,8 @@ export const TableContent = props => {
         // setIpfsURI(res.data);
         console.log(res);
         // return ipfsURI;
+        setIpfsURI(res.data.cid);
+        setqrCodeAddress(res.data.qrCodeAddress);
       })
       .catch(err => {
         console.error(err);
