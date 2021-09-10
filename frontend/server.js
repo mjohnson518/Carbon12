@@ -4,11 +4,7 @@ const https = require('https');
 const http = require('http');
 const cors = require('cors');
 const axios = require('axios').default;
-const { create } = require('ipfs-http-client');
 const CID = require('cids');
-const path = require('path');
-const { response } = require('express');
-const { reject } = require('lodash');
 const PORT = 3001;
 const app = express();
 
@@ -19,8 +15,6 @@ const options = {};
 
 http.createServer(app).listen(80);
 https.createServer(options, app).listen(443);
-
-const IPFS_CLIENT = create();
 
 function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
