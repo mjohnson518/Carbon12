@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as React from 'react';
 
 const POTENTIAL_KEYS = [
+  'landing_id',
   'text',
   'choice',
   'choices',
@@ -23,6 +24,10 @@ const badgeEnum = {
 };
 
 export const columns = [
+  {
+    accessor: 'landing_id',
+    Header: 'ID',
+  },
   {
     accessor: 'companyName',
     Header: 'Company Name',
@@ -63,14 +68,11 @@ export function getFormByID(storageArrayPosition) {
 }
 
 export function parseAnswers(answers) {
-  return answers.reduce(
-    (obj, answer) => {
-      obj[answer.field.ref] = handleTypeFormField(answer)
+  return answers.reduce((obj, answer) => {
+    obj[answer.field.ref] = handleTypeFormField(answer);
 
-      return obj;
-    },
-    {}
-  );
+    return obj;
+  }, {});
 }
 
 export function handleTypeFormField(item) {
@@ -82,38 +84,43 @@ export function handleTypeFormField(item) {
 }
 
 export function getFormData() {
-  return JSON.parse(localStorage.getItem('typeFormData')) || [];
+  const formdata = JSON.parse(localStorage.getItem('typeFormData')) || [];
+  return formdata;
 }
 
 export function fetchFormData(toast) {
   const cancelTokenSource = axios.CancelToken.source();
 
-  return axios.get("/typeform", { cancelToken: cancelTokenSource.token })
-    .then((response) => {
-      const storage = response.data && response.data.items ? Array.from(response.data.items) : [];
-      localStorage.setItem("typeFormData", JSON.stringify(storage));
+  return axios
+    .get('/typeform', { cancelToken: cancelTokenSource.token })
+    .then(response => {
+      const storage =
+        response.data && response.data.items
+          ? Array.from(response.data.items)
+          : [];
+      localStorage.setItem('typeFormData', JSON.stringify(storage));
 
       toast({
         title: `sync returned ${storage.length} questionaires`,
         status: 'success',
         isClosable: true,
-      })
+      });
 
       cancelTokenSource.cancel();
 
       return getFormData();
     })
-    .catch((error) => {
+    .catch(error => {
       toast({
         title: `re-syncing errored: ${error.message}`,
         status: 'error',
         isClosable: true,
-      })
+      });
 
-      localStorage.setItem("typeFormData", JSON.stringify([]));
+      localStorage.setItem('typeFormData', JSON.stringify([]));
 
       cancelTokenSource.cancel();
 
       return getFormData();
-    })
+    });
 }
