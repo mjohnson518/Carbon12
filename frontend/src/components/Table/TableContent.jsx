@@ -37,6 +37,7 @@ export const TableContent = props => {
 
   // const formIDs = forms.map(form => form.landing_id);
 
+
   const [qrCodeAddress, setqrCodeAddress] = useState({});
   const [ipfsURI, setIpfsURI] = useState({});
   const [cid, setCID] = useState({});
@@ -59,8 +60,7 @@ export const TableContent = props => {
   }
 
   function uploadToIPFS(questionaire, id) {
-    console.log('QUEST ID', mintedNfts);
-    // check if questionaire has already been minted
+     // check if questionaire has already been minted
 
     if (!findMintedNFTById(id)) {
       // manipulate questionaire data
