@@ -25,31 +25,37 @@ import { ethers } from 'ethers';
 import Capture12Artifact from '../../contracts/Capture12.json';
 import contractAddresses from '../../contracts/contract-address.json';
 
-export const TableContent = (props) => {
+export const TableContent = props => {
   const forms = getFormData() || [];
-  const formAnswers = forms.map(form => form.answers);
+
   const toast = useToast();
 
+  const formAnswers = forms.map(form => {
+    return { answers: form.answers, landing_id: form.landing_id };
+  });
+
+  // const formIDs = forms.map(form => form.landing_id);
+
   const [qrCodeAddress, setqrCodeAddress] = useState({});
-  const [ipfsURI, setIpfsURI] = useState({})
-  const [cid, setCID] = useState({})
-  const [receipt, setreceipt] = useState({})
+  const [ipfsURI, setIpfsURI] = useState({});
+  const [cid, setCID] = useState({});
+  const [receipt, setreceipt] = useState({});
   // const  window.ethereum.enable();
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const [ signer, setSigner ] = useState(provider.getSigner(0))
+  const [signer, setSigner] = useState(provider.getSigner(0));
 
   const [contract, setContract] = useState(() => {
     return new ethers.Contract(
       contractAddresses.Capture12,
       Capture12Artifact.abi,
       signer
-    )
-  })
+    );
+  });
 
   function uploadToIPFS(questionaire) {
     // manipulate questionaire data
     const answersObj = parseAnswers(questionaire);
-    console.log(answersObj)
+
     // check if questionaire has already been minted
 
     axios
@@ -60,28 +66,29 @@ export const TableContent = (props) => {
         setqrCodeAddress(res.data.qrCodeAddress);
         setIpfsURI(res.data.ipfsJsonLink);
 
-        return ipfsURI
-      }).then(async(ipfsJsonLink) => {
-        const tx = await contract.safeMint(signer.getAddress(), ipfsJsonLink)
+        return ipfsURI;
+      })
+      .then(async ipfsJsonLink => {
+        const tx = await contract.safeMint(signer.getAddress(), ipfsJsonLink);
         console.log(tx);
 
-        const txMessage = `${tx.hash} transaction is minting your NFT`
+        const txMessage = `${tx.hash} transaction is minting your NFT`;
         toast({
-          title: "Minted Carbon12 NFT",
+          title: 'Minted Carbon12 NFT',
           description: txMessage,
           status: 'success',
           isClosable: true,
-        })
+        });
 
         const receipt = await tx.wait();
-        const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`
+        const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`;
 
         toast({
-          title: "Minted Carbon12 NFT",
+          title: 'Minted Carbon12 NFT',
           description: receiptMessage,
           status: 'success',
           isClosable: true,
-        })
+        });
       })
       .catch(err => {
         toast({
@@ -89,7 +96,7 @@ export const TableContent = (props) => {
           description: `Something went wrong with your upload: ${err.message}`,
           status: 'error',
           isClosable: true,
-        })
+        });
       });
 
     // store questionaire in localstorage
@@ -111,9 +118,13 @@ export const TableContent = (props) => {
         {formAnswers.map((answers, i) => (
           <Tr key={i}>
             {columns.map((column, index) => {
-              const item = answers.find(
-                col => col.field.ref === column.accessor
-              );
+              const item = answers.find(col => {
+                if (col.field) {
+                  return col.field.ref === column.accessor;
+                } else {
+                  return col.landing_id === column.accessor;
+                }
+              });
               const cell = item ? handleTypeFormField(item) : 'N/A';
 
               return (
