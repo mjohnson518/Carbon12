@@ -62,9 +62,10 @@ export const columns = [
   },
 ];
 
-export function getFormByID(storageArrayPosition) {
+export function getFormByID(id) {
   const localArray = JSON.parse(localStorage.getItem('typeFormData')) || [];
-  return localArray[storageArrayPosition];
+  const index = localArray.findIndex(el => el.token === id);
+  return localArray[index];
 }
 
 export function parseAnswers(answers) {
