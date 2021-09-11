@@ -37,12 +37,13 @@ const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 
 export const Dapp = (props) => {
   const toast = useToast();
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const localProvider = new ethers.providers.StaticJsonRpcProvider('http://127.0.0.1:8545/');
+  // const provider = new ethers.providers.Web3Provider(window.ethereum);
 
   const [ selectedAddress, setSelectedAddress] = useState(null)
   const [ tokenData, setTokenData ] = useState({})
   const [ pollDataInterval, setPollDataInterval ] = useState(null);
-  const [ signer, setSigner ] = useState(provider.getSigner(0))
+  const [ signer, setSigner ] = useState(localProvider.getSigner(0))
 
   const [ nft721Contract, _ ] = useState(() => {
     return new ethers.Contract(
