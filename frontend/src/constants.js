@@ -7,7 +7,7 @@ export const ChainId = {
   Rinkeby: 4,
   xDai: 100,
   Polygon: 137,
-  Localhost: 1337,
+  Localhost: 31337,
   Hardhat: 31337,
 }
 
