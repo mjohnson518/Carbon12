@@ -82,11 +82,10 @@ export const Dapp = (props) => {
       return;
     }
 
-    const [wallet] = await window.ethereum.enable()
+    setSelectedAddress(signer.getAddress());
+    await window.ethereum.enable()
 
-    setSelectedAddress(wallet);
-
-    // startPollingData();
+    // setSelectedAddress(wallet);
 
     // We reinitialize it whenever the user changes their account.
     window.ethereum.on('accountsChanged', ([newAddress]) => {
