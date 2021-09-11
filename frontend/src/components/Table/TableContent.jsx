@@ -32,6 +32,7 @@ export const TableContent = (props) => {
 
   const [qrCodeAddress, setqrCodeAddress] = useState({});
   const [ipfsURI, setIpfsURI] = useState({})
+  const [cid, setCID] = useState({})
   const [receipt, setreceipt] = useState({})
   // const  window.ethereum.enable();
   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -55,17 +56,29 @@ export const TableContent = (props) => {
       .post('/upload-to-ipfs', answersObj)
       .then(res => {
         console.log(res);
-        setIpfsURI(res.data.cid);
+        setCID(res.data.cid);
         setqrCodeAddress(res.data.qrCodeAddress);
-        return res.data.ipfsJsonLink;
-      }).then(async() => {
-        const tx = await contract.safeMint(signer.getAddress(), ipfsURI)
+        setIpfsURI(res.data.ipfsJsonLink);
+
+        return ipfsURI
+      }).then(async(ipfsJsonLink) => {
+        const tx = await contract.safeMint(signer.getAddress(), ipfsJsonLink)
+        console.log(tx);
+
+        const txMessage = `${tx.hash} transaction is minting your NFT`
+        toast({
+          title: "Minted Carbon12 NFT",
+          description: txMessage,
+          status: 'success',
+          isClosable: true,
+        })
+
         const receipt = await tx.wait();
-        const message = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`
+        const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`
 
         toast({
           title: "Minted Carbon12 NFT",
-          description: message,
+          description: receiptMessage,
           status: 'success',
           isClosable: true,
         })
