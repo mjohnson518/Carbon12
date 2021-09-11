@@ -23,15 +23,19 @@ import {
 
 export const TableContent = props => {
   const forms = getFormData() || [];
-  const formAnswers = forms.map(form => form.answers);
+  const formAnswers = forms.map(form => {
+    return { answers: form.answers, landing_id: form.landing_id };
+  });
+
+  // const formIDs = forms.map(form => form.landing_id);
 
   const [ipfsURI, setIpfsURI] = useState({});
   const [qrCodeAddress, setqrCodeAddress] = useState({});
 
   function uploadToIPFS(questionaire) {
     // manipulate questionaire data
-    const answersObj = JSON.stringify(parseAnswers(questionaire));
-
+    const answersObj = parseAnswers(questionaire);
+    console.log('answers', answersObj);
     // check if questionaire has already been minted
     // create ipfs link
 
@@ -69,9 +73,13 @@ export const TableContent = props => {
         {formAnswers.map((answers, i) => (
           <Tr key={i}>
             {columns.map((column, index) => {
-              const item = answers.find(
-                col => col.field.ref === column.accessor
-              );
+              const item = answers.find(col => {
+                if (col.field) {
+                  return col.field.ref === column.accessor;
+                } else {
+                  return col.landing_id === column.accessor;
+                }
+              });
               const cell = item ? handleTypeFormField(item) : 'N/A';
 
               return (
