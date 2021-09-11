@@ -1,9 +1,7 @@
-import React from "react";
+import { Box, Button, Flex, Stack, StackDivider, Text, useColorModeValue as mode, useToast } from '@chakra-ui/react';
+import React from 'react';
 
-import { NetworkErrorMessage } from "./NetworkErrorMessage";
-
-import { Button, Flex, Box, Stack, StackDivider, Text, useColorModeValue as mode } from '@chakra-ui/react'
-import { Logo } from "./Logo";
+import { Logo } from './Logo';
 
 export const Description = (props) => {
   const { title, children } = props
@@ -23,9 +21,9 @@ export const Description = (props) => {
   )
 }
 
-export function ConnectWallet({ connectWallet, networkError, dismiss }) {
+export function ConnectWallet({ connectWallet}) {
   return (
-    <Box as="section" bg={mode('gray.100', 'gray.800')} mt={40} minHeight="425px">
+    <Box as="section" bg={mode('gray.100', 'gray.800')} mt={40} minHeight="650px">
       <Box maxW={{ base: 'xl', md: '7xl' }} mx="auto" px={{ base: '6', md: '8' }}>
         <Box
           maxW="3xl"
@@ -38,13 +36,6 @@ export function ConnectWallet({ connectWallet, networkError, dismiss }) {
           overflow="hidden"
         >
           <Box mb="8">
-            {/* Metamask network should be set to Localhost:8545. */}
-            {networkError && (
-              <NetworkErrorMessage
-                message={networkError}
-                dismiss={dismiss}
-              />
-            )}
             <Text color="gray.500" fontSize="sm">
               Please connect to your wallet.
             </Text>

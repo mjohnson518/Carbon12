@@ -59,9 +59,9 @@ export const Layout = ({children}) => {
         </Flex>
       </Flex>
 
-      <VStack height="100%" minHeight="700px">
+      <VStack>
         {children}
-        <Footer/>
+        <Footer />
       </VStack>
     </Flex>
   )

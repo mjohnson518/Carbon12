@@ -4,11 +4,7 @@ const https = require('https');
 const http = require('http');
 const cors = require('cors');
 const axios = require('axios').default;
-const { create } = require('ipfs-http-client');
 const CID = require('cids');
-const path = require('path');
-const { response } = require('express');
-const { reject } = require('lodash');
 const PORT = 3001;
 const app = express();
 
@@ -20,16 +16,14 @@ const options = {};
 http.createServer(app).listen(80);
 https.createServer(options, app).listen(443);
 
-const IPFS_CLIENT = create();
-
-function pinJSONToIPFS(pinataApiKey, pinataSecretApiKey, JSONBody) {
+function pinJSONToIPFS(JSONBody) {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
   return new Promise((resolve, reject) => {
     axios
       .post(url, JSONBody, {
         headers: {
-          pinata_api_key: pinataApiKey,
-          pinata_secret_api_key: pinataSecretApiKey,
+          pinata_api_key: process.env.PINATA_API_KEY,
+          pinata_secret_api_key: process.env.PINATA_API_SECRET,
         },
       })
       .then(response => {
@@ -62,26 +56,24 @@ app.get('/typeform', async (req, res) => {
 app.post('/upload-to-ipfs', async (req, res) => {
   // request for create-qr-code
   const content = req.body;
-
+  console.log(content)
+  // TODO change the path to something more sane for multitenancy -- /portfolios/{companyName or id}
   const ipfsData = {
     path: '/',
     content: content,
     mode: 'string',
     mtime: Date.now(),
   };
-  const response = await pinJSONToIPFS(
-    process.env.PINATA_API_Key,
-    process.env.PINATA_API_Secret,
-    ipfsData
-  );
+  const response = await pinJSONToIPFS(ipfsData);
 
   const cid = new CID(response.IpfsHash).toV1().toString('base32');
 
   console.log('Ipfs cid', cid);
 
-  const qrCodeAddress = `https://api.qrserver.com/v1/create-qr-code/?data=https://ipfs.io/ipfs/${cid}&size=100x100`;
+  const ipfsJsonLink = `https://ipfs.io/ipfs/${cid}`
+  const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsJsonLink}&size=100x100`;
 
-  res.json({ cid, qrCodeAddress });
+  res.json({ cid, qrCodeLink, ipfsJsonLink });
 
   // manipulate data post questionaire upload to ipfs
 

@@ -25,17 +25,16 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         _unpause();
     }
 
-    function safeMint(address to, string calldata _ipfsUri) public onlyOwner returns(uint){
+    function safeMint(address to, string calldata _ipfsUri) public returns(uint){
         uint256 tokenId = _tokenIdCounter.current();
 
         // require(_ipfsURI == whitelisted, "we should add some logic to whitelist this or something maybe?");
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, _ipfsUri);        
+        _setTokenURI(tokenId, _ipfsUri);
         _tokenIdCounter.increment();
         return tokenId;
     }
-    
-    
+
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         whenNotPaused
