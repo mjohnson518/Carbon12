@@ -17,20 +17,12 @@ import {
   ModalBody,
   ModalCloseButton,
   Heading,
-  ButtonGroup,
-  HStack,
-  Center,
-  Image,
-  useBoolean,
-  Box,
+  ButtonGroup
 } from '@chakra-ui/react';
 import axios from 'axios';
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import { NFTE } from '@nfte/react';
-
-import ReactCardFlip from 'react-card-flip';
+import { FlipCard721 } from '../ImageNFT/FlipCard721';
 
 import {
   columns,
@@ -78,7 +70,6 @@ export const TableContent = (props) => {
   const [ modalTitle, setModalTitle ] = useState('')
   const [ modalDescription, setModalDescription] = useState('')
   const [ modalContentDisplay, setModalContentDisplay ] = useState([])
-  const [isFlipped, actions] = useBoolean();
 
   function setModalandOpen(item) {
     const companyAttribute = item.find((i) => i.field.ref === 'companyName')
@@ -265,40 +256,14 @@ export const TableContent = (props) => {
       <Modal isOpen={isOpen} size="xl" onClose={onClose}>
         <ModalOverlay />
         <ModalContent minWidth="1000px">
+          <FlipCard721 />
           <ModalHeader>
             {modalTitle}
             <Heading size="xs">
               Product - {modalDescription}
             </Heading>
           </ModalHeader>
-          <Center p={10}>
-            <ReactCardFlip isFlipped={isFlipped} flipDirection="vertical">
-              <Box>
-                <NFTE contract="0x3b3ee1931dc30c1957379fac9aba94d1c48a5405" tokenId="467"/>
-                {/* <Image
-                  boxShadow="2xl"
-                  boxSize="lg"
-                  objectFit="cover"
-                  src="https://bit.ly/sage-adebayo"
-                  alt="Segun Adebayo"
-                /> */}
 
-                <Button onClick={() => actions.toggle()}>Click to flip</Button>
-              </Box>
-
-              <Box>
-                <Image
-                  boxShadow="2xl"
-                  boxSize="lg"
-                  objectFit="cover"
-                  src="https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg"
-                  alt="Segun Adebayo"
-                />
-                <Button onClick={() => actions.toggle()}>Click to flip</Button>
-              </Box>
-
-            </ReactCardFlip>
-          </Center>
           <ModalCloseButton />
           <ModalBody minWidth="600px">
             <CardWithContent answers={modalContentDisplay} />
