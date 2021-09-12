@@ -12,10 +12,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable, ERC721Burnable {
     using Counters for Counters.Counter;
-
+    
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("Capture12", "C12") {}
+    constructor() ERC721("Capture12", "C12") {
+      
+    }
 
     function pause() public onlyOwner {
         _pause();
@@ -26,8 +28,8 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
     }
 
     function safeMint(address to, string calldata _ipfsUri) public returns(uint){
-        uint256 tokenId = _tokenIdCounter.current();
 
+        uint256 tokenId = _tokenIdCounter.current();
         // require(_ipfsURI == whitelisted, "we should add some logic to whitelist this or something maybe?");
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, _ipfsUri);
