@@ -65,7 +65,6 @@ function pinFiletoIPFS(file, ipfsUri) {
       .catch(err => reject(err));
   });
 }
-
 function saveImagetoDisk(url, path) {
   try {
     const localPath = fs.createWriteStream(path);
@@ -76,7 +75,6 @@ function saveImagetoDisk(url, path) {
     console.error(err);
   }
 }
-
 app.get('/typeform', async (req, res) => {
   await axios
     .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
