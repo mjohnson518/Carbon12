@@ -80,7 +80,6 @@ export function handleTypeFormField(item) {
   const attributeKey = Object.keys(item).find(key =>
     POTENTIAL_KEYS.includes(key)
   );
-
   return item[attributeKey] || 'N/A';
 }
 
