@@ -67,8 +67,8 @@ export const TableContent = props => {
   function handleForm(id) {
     // check if questionaire has already been minted
     if (!findMintedNFTById(id)) {
-      // manipulate questionaire data
       const form = findFormWithID(id);
+      // manipulate questionaire data
       const answersObj = parseAnswers(form.answers);
       return answersObj;
     } else {
@@ -112,7 +112,7 @@ export const TableContent = props => {
         isClosable: true,
       });
       const receipt = await tx.wait();
-      //console.log(receipt);
+
       setmintedNfts(arr => [
         ...mintedNfts,
         { id: id, hash: receipt.to, ipfsURI: ipfsuri },
@@ -124,6 +124,7 @@ export const TableContent = props => {
         status: 'success',
         isClosable: true,
       });
+      console.log('id', id, 'hash', receipt.to, 'metadata uri', ipfsuri);
     } catch (err) {
       toast({
         title: 'Error',
@@ -139,20 +140,27 @@ export const TableContent = props => {
   }
 
   async function mintNFTButton(id) {
-    const { form } = handleForm(id);
-    const dataUpload = await uploadToIPFS(form);
-    const qrCode = getQrCode(dataUpload);
-    let tokenCounter = 0;
-    const metadata = {
-      id: tokenCounter,
-      form_number: id,
-      formData_url: dataUpload,
-      image: qrCode,
-      time_stamp: Date.now(),
-    };
-    const metaDataUpload = await uploadToIPFS(metadata);
-    mintNFT(metaDataUpload, id);
+    try {
+      const form = handleForm(id);
+      const dataUpload = await uploadToIPFS(form);
+      const qrCode = getQrCode(dataUpload);
+      let tokenCounter = 0;
+
+      const metadata = {
+        id: tokenCounter,
+        form_number: id,
+        formData_url: dataUpload,
+        image: qrCode,
+        time_stamp: Date.now(),
+      };
+
+      const metaDataUpload = await uploadToIPFS(metadata);
+      mintNFT(metaDataUpload, id);
+    } catch (err) {
+      console.log(err);
+    }
   }
+
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
       <Thead bg={mode('gray.50', 'gray.800')}>
