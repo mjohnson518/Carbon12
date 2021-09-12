@@ -7,6 +7,9 @@ const axios = require('axios').default;
 const CID = require('cids');
 const PORT = 3001;
 const app = express();
+const FormData = require('form-data');
+const fs = require('fs');
+const { response } = require('express');
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -33,6 +36,45 @@ function pinJSONToIPFS(JSONBody) {
   });
 }
 
+function pinFiletoIPFS(file, ipfsUri) {
+  console.log('PINFILE PING');
+  //pinata api url
+  const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+  //create data to send
+  const data = new FormData();
+  //add image to data and create datastream
+  data.append('qrCode', file);
+  //create metadata
+  const metadata = JSON.stringify({
+    name: 'nftQrCode',
+    ipfsUri: ipfsUri,
+  });
+  //add metatdata to fil
+  data.append('pinataMetadata', metadata);
+  //make axios call
+  return new Promise((resolve, reject) => {
+    axios
+      .post(url, data, {
+        maxBodyLength: 'Infinity',
+        headers: {
+          pinata_api_key: process.env.PINATA_API_KEY,
+          pinata_secret_api_key: process.env.PINATA_API_SECRET,
+        },
+      })
+      .then(response => resolve(response.data))
+      .catch(err => reject(err));
+  });
+}
+function saveImagetoDisk(url, path) {
+  try {
+    const localPath = fs.createWriteStream(path);
+    const request = https.get(url, function (response) {
+      response.pipe(localPath);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
 app.get('/typeform', async (req, res) => {
   await axios
     .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
@@ -53,10 +95,25 @@ app.get('/typeform', async (req, res) => {
     });
 });
 
-app.post('/upload-to-ipfs', async (req, res) => {
+app.post('/upload-img-to-ipfs', async (req, res) => {
   // request for create-qr-code
+  const content = req.body.imgUrl;
+  const uri = req.body.ipfsUri;
+  const path = './src/components/qrcodes/' + uri.slice(-20) + '.png';
+  saveImagetoDisk(content, path);
+  //pin img to IPFS through pinata
+  const response = await pinFiletoIPFS(path, req.body.ipfsUri);
+  // convert hash to cid
+  const cid = new CID(response.IpfsHash).toV1().toString('base32');
+  //create ipfs link
+  const ipfsImgLink = `https://ipfs.io/ipfs/${cid}`;
+  //send response to frontend
+  res.json({ cid, ipfsImgLink });
+});
+
+app.post('/upload-to-ipfs', async (req, res) => {
+  console.log('JSON PING');
   const content = req.body;
-  console.log(content)
   // TODO change the path to something more sane for multitenancy -- /portfolios/{companyName or id}
   const ipfsData = {
     path: '/',
@@ -68,12 +125,10 @@ app.post('/upload-to-ipfs', async (req, res) => {
 
   const cid = new CID(response.IpfsHash).toV1().toString('base32');
 
-  console.log('Ipfs cid', cid);
+  const ipfsJsonLink = `https://ipfs.io/ipfs/${cid}`;
+  //const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsJsonLink}&size=100x100`;
 
-  const ipfsJsonLink = `https://ipfs.io/ipfs/${cid}`
-  const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsJsonLink}&size=100x100`;
-
-  res.json({ cid, qrCodeLink, ipfsJsonLink });
+  res.json({ cid, ipfsJsonLink });
 
   // manipulate data post questionaire upload to ipfs
 
