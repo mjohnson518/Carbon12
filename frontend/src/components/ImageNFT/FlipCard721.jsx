@@ -20,14 +20,14 @@ export const FlipCard721 = (props) => {
             alt="Segun Adebayo"
           /> */}
 
-          <Center p={2}>
+          {/* <Center p={2}>
             <Button
               colorScheme="teal"
               variant="outline"
               onClick={() => actions.toggle()}>
               Click to flip
             </Button>
-          </Center>
+          </Center> */}
         </Box>
 
         <Box>
