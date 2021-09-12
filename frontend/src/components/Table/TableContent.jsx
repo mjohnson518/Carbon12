@@ -35,7 +35,6 @@ export const TableContent = props => {
   });
 
   // const formIDs = forms.map(form => form.landing_id);
-  let IPFSVAR;
 
   const [qrCodeAddress, setqrCodeAddress] = useState({});
   const [ipfsURI, setIpfsURI] = useState({});
@@ -65,46 +64,45 @@ export const TableContent = props => {
     return formAnswers[index];
   }
 
-  function uploadToIPFS(id) {
+  function handleForm(id) {
     // check if questionaire has already been minted
     if (!findMintedNFTById(id)) {
       // manipulate questionaire data
       const form = findFormWithID(id);
       const answersObj = parseAnswers(form.answers);
-
-      axios
-        .post('/upload-to-ipfs', answersObj)
-        .then(res => {
-          setCID(res.data.cid);
-          IPFSVAR = res.data.ipfsJsonLink;
-          setIpfsURI(res.data.ipfsJsonLink);
-          mintNFT(id);
-        })
-        .catch(err => {
-          toast({
-            title: 'Error',
-            description: `Something went wrong with your upload to IPFS: ${err.message}`,
-            status: 'error',
-            isClosable: true,
-          });
-        });
+      return answersObj;
     } else {
       toast({
         title: 'Error',
         description: `Your NFT has already been minted.
-          FormID: ${id}             
-          NFT Hash: ${findMintedNFTById(id).hash}`,
+            FormID: ${id}             
+            NFT Hash: ${findMintedNFTById(id).hash}`,
         status: 'error',
         isClosable: true,
       });
     }
+  }
 
+  async function uploadToIPFS(object) {
+    try {
+      let res = await axios.post('/upload-to-ipfs', object);
+      setCID(res.data.cid);
+      setIpfsURI(res.data.ipfsJsonLink);
+      return res.data.ipfsJsonLink;
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: `Something went wrong with your upload to IPFS: ${err.message}`,
+        status: 'error',
+        isClosable: true,
+      });
+    }
     // store questionaire in localstorage
   }
 
-  async function mintNFT(id) {
+  async function mintNFT(ipfsuri, id) {
     try {
-      const tx = await contract.safeMint(signer.getAddress(), ipfsURI);
+      const tx = await contract.safeMint(signer.getAddress(), ipfsuri);
       //console.log(tx);
       const txMessage = `${tx.hash} transaction is minting your NFT`;
       toast({
@@ -117,7 +115,7 @@ export const TableContent = props => {
       //console.log(receipt);
       setmintedNfts(arr => [
         ...mintedNfts,
-        { id: id, hash: receipt.to, ipfsURI: ipfsURI, ipfsCID: cid },
+        { id: id, hash: receipt.to, ipfsURI: ipfsuri },
       ]);
       const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`;
       toast({
@@ -126,7 +124,6 @@ export const TableContent = props => {
         status: 'success',
         isClosable: true,
       });
-      getQrIpfs();
     } catch (err) {
       toast({
         title: 'Error',
@@ -137,28 +134,25 @@ export const TableContent = props => {
     }
   }
 
-  function getQrIpfs() {
-    const qrCodeAddress = `https://api.qrserver.com/v1/create-qr-code/?data=${IPFSVAR}&size=100x100`;
-
-    const imageData = {
-      imgUrl: qrCodeAddress,
-      ipfsUri: IPFSVAR,
-    };
-    axios
-      .post('/upload-img-to-ipfs', imageData)
-      .then(res => {
-        console.log('QR UPLOAD', res);
-      })
-      .catch(err => {
-        toast({
-          title: 'Error',
-          description: `Something went wrong with your QR upload: ${err.message}`,
-          status: 'error',
-          isClosable: true,
-        });
-      });
+  function getQrCode(ipfsUri) {
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsUri}&size=100x100`;
   }
 
+  async function mintNFTButton(id) {
+    const { form } = handleForm(id);
+    const dataUpload = await uploadToIPFS(form);
+    const qrCode = getQrCode(dataUpload);
+    let tokenCounter = 0;
+    const metadata = {
+      id: tokenCounter,
+      form_number: id,
+      formData_url: dataUpload,
+      image: qrCode,
+      time_stamp: Date.now(),
+    };
+    const metaDataUpload = await uploadToIPFS(metadata);
+    mintNFT(metaDataUpload, id);
+  }
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
       <Thead bg={mode('gray.50', 'gray.800')}>
@@ -194,7 +188,7 @@ export const TableContent = props => {
               <Button
                 size="sm"
                 colorScheme="teal"
-                onClick={() => uploadToIPFS(element.id)}
+                onClick={() => mintNFTButton(element.id)}
               >
                 Mint
               </Button>

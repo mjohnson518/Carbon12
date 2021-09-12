@@ -65,6 +65,7 @@ function pinFiletoIPFS(file, ipfsUri) {
       .catch(err => reject(err));
   });
 }
+
 function saveImagetoDisk(url, path) {
   try {
     const localPath = fs.createWriteStream(path);
@@ -75,6 +76,7 @@ function saveImagetoDisk(url, path) {
     console.error(err);
   }
 }
+
 app.get('/typeform', async (req, res) => {
   await axios
     .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
@@ -113,22 +115,25 @@ app.post('/upload-img-to-ipfs', async (req, res) => {
 
 app.post('/upload-to-ipfs', async (req, res) => {
   console.log('JSON PING');
-  const content = req.body;
-  // TODO change the path to something more sane for multitenancy -- /portfolios/{companyName or id}
-  const ipfsData = {
-    path: '/',
-    content: content,
-    mode: 'string',
-    mtime: Date.now(),
-  };
-  const response = await pinJSONToIPFS(ipfsData);
+  try {
+    const content = req.body;
+    // TODO change the path to something more sane for multitenancy -- /portfolios/{companyName or id}
+    const ipfsData = {
+      path: '/',
+      content: content,
+      mode: 'string',
+      mtime: Date.now(),
+    };
+    const response = await pinJSONToIPFS(ipfsData);
 
-  const cid = new CID(response.IpfsHash).toV1().toString('base32');
+    const cid = new CID(response.IpfsHash).toV1().toString('base32');
 
-  const ipfsJsonLink = `https://ipfs.io/ipfs/${cid}`;
+    const ipfsJsonLink = `https://ipfs.io/ipfs/${cid}`;
 
-  res.json({ cid, ipfsJsonLink });
-
+    res.json({ cid, ipfsJsonLink });
+  } catch (err) {
+    console.error(err);
+  }
   // manipulate data post questionaire upload to ipfs
 
   // store questionaire in localstorage
