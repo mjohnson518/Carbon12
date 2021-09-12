@@ -27,18 +27,6 @@ module.exports = function (app) {
   );
 
   app.use(
-    '/upload-img-to-ipfs/**',
-    createProxyMiddleware({
-      target: 'http://127.0.0.1:3001/upload-img-to-ipfs',
-      headers: {
-        accept: 'application/json',
-        method: 'POST',
-      },
-      changeOrigin: true,
-    })
-  );
-
-  app.use(
     '/create-qr-code/**',
     createProxyMiddleware({
       target: 'http://127.0.0.1:3001/create-qr-code',

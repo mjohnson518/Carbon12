@@ -126,7 +126,6 @@ app.post('/upload-to-ipfs', async (req, res) => {
   const cid = new CID(response.IpfsHash).toV1().toString('base32');
 
   const ipfsJsonLink = `https://ipfs.io/ipfs/${cid}`;
-  //const qrCodeLink = `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsJsonLink}&size=100x100`;
 
   res.json({ cid, ipfsJsonLink });
 

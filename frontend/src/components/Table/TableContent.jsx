@@ -36,6 +36,7 @@ export const TableContent = props => {
 
   // const formIDs = forms.map(form => form.landing_id);
   let IPFSVAR;
+
   const [qrCodeAddress, setqrCodeAddress] = useState({});
   const [ipfsURI, setIpfsURI] = useState({});
   const [cid, setCID] = useState({});
