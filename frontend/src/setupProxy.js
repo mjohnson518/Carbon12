@@ -29,7 +29,7 @@ module.exports = function (app) {
   app.use(
     '/upload-img-to-ipfs/**',
     createProxyMiddleware({
-      target: 'http://127.0.0.1:3001/upload-img-to-ipfs',
+      target: 'http://127.0.0.1:3001/upload-to-ipfs',
       headers: {
         accept: 'application/json',
         method: 'POST',
