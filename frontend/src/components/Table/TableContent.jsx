@@ -112,7 +112,6 @@ export const TableContent = props => {
         isClosable: true,
       });
       const receipt = await tx.wait();
-
       setmintedNfts(arr => [
         ...mintedNfts,
         { id: id, hash: receipt.to, ipfsURI: ipfsuri },

@@ -4,6 +4,21 @@ const {
   isCallTrace,
 } = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
 
+const dataUpload = await uploadToIPFS(form);
+const qrCode = getQrCode(dataUpload);
+let tokenCounter = 0;
+
+const metadata = {
+  id: tokenCounter,
+  form_number: id,
+  formData_url: dataUpload,
+  image: qrCode,
+  time_stamp: Date.now(),
+};
+
+const metaDataUpload = await uploadToIPFS(metadata);
+mintNFT(metaDataUpload, id);
+
 describe("Capture12", function () {
   let owner;
   let addr1;
