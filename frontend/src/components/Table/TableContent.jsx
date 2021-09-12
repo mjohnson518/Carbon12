@@ -160,7 +160,6 @@ export const TableContent = props => {
       console.log(err);
     }
   }
-
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
       <Thead bg={mode('gray.50', 'gray.800')}>
