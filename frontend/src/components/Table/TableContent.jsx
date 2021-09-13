@@ -158,7 +158,10 @@ export const TableContent = props => {
         };
 
         const metaDataUpload = await uploadToIPFS(metadata);
-        mintNFT(metaDataUpload, id).then(response => setDisable(false));
+        mintNFT(metaDataUpload, id).then(response => {
+          setDisable(false);
+          tokenCounter++;
+        });
       } else {
         setDisable(false);
       }
