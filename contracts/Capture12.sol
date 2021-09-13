@@ -1,24 +1,21 @@
-//SPDX-License-Identifier: Unlicense
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable, ERC721Burnable {
     using Counters for Counters.Counter;
-    
+
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("Capture12", "C12") {
-      
-    }
+    constructor() ERC721("Capture12", "C12") {}
 
     function pause() public onlyOwner {
         _pause();
@@ -36,7 +33,7 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         _setTokenURI(tokenId, _ipfsUri);
         _tokenIdCounter.increment();
         return tokenId;
-    }    
+    }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -51,6 +48,13 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
+
+    // function addToPortfolio() {
+    //     uint256 tokenId = 6;
+    //     bytes memory tokenIdBytes = new bytes(32);
+    //     assembly { mstore(add(tokenIdBytes, 32), tokenId) }
+    //     safeTransferFrom(msg.sender, address(), 3, tokenIdBytes);
+    // }
 
     function tokenURI(uint256 tokenId)
         public
