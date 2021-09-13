@@ -3,6 +3,7 @@
 pragma solidity ^0.8.2;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
@@ -35,7 +36,7 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         _setTokenURI(tokenId, _ipfsUri);
         _tokenIdCounter.increment();
         return tokenId;
-    }
+    }    
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
