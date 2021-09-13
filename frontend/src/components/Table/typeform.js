@@ -94,8 +94,7 @@ export function fetchFormData(toast) {
   return axios
     .get('/typeform', { cancelToken: cancelTokenSource.token })
     .then(response => {
-      const storage =
-        response.data && response.data.items
+      const storage = response.data && response.data.items
           ? Array.from(response.data.items)
           : [];
       localStorage.setItem('typeFormData', JSON.stringify(storage));

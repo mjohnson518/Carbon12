@@ -7,11 +7,22 @@ import {
   Thead,
   Tr,
   useColorModeValue as mode,
+  useDisclosure,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Heading,
+  ButtonGroup
 } from '@chakra-ui/react';
 import axios from 'axios';
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+
+import { FlipCard721 } from '../ImageNFT/FlipCard721';
 
 import {
   columns,
@@ -23,18 +34,19 @@ import {
 import { ethers } from 'ethers';
 import Capture12Artifact from '../../contracts/Capture12.json';
 import contractAddresses from '../../contracts/contract-address.json';
+import { CardWithContent } from '../CardWithContent';
+
 let tokenCounter = 0;
-export const TableContent = props => {
-  const forms = getFormData() || [];
+export const TableContent = (props) => {
+  const formsData = getFormData() || [];
   const toast = useToast();
-  const formAnswers = forms.map(form => {
+  const forms = formsData.map(form => {
     return {
       answers: form.answers,
       id: form.landing_id,
     };
   });
 
-  // const formIDs = forms.map(form => form.landing_id);
 
   const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
@@ -44,8 +56,7 @@ export const TableContent = props => {
   // const  window.ethereum.enable();
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  const [signer, setSigner] = useState(provider.getSigner(0));
-
+  const [ signer, setSigner ] = useState(provider.getSigner(0));
   const [contract, setContract] = useState(() => {
     return new ethers.Contract(
       contractAddresses.Capture12,
@@ -54,14 +65,29 @@ export const TableContent = props => {
     );
   });
 
+  // modal
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [ modalTitle, setModalTitle ] = useState('')
+  const [ modalDescription, setModalDescription] = useState('')
+  const [ modalContentDisplay, setModalContentDisplay ] = useState([])
+
+  function setModalandOpen(item) {
+    const companyAttribute = item.find((i) => i.field.ref === 'companyName')
+    const productAttribute = item.find((i) => i.field.ref === 'productName')
+    setModalTitle(companyAttribute[companyAttribute.type])
+    setModalDescription(productAttribute[productAttribute.type])
+    setModalContentDisplay(item)
+    onOpen()
+  }
+
   function findMintedNFTById(id) {
     const index = mintedNfts.findIndex(el => el.id === id);
     return mintedNfts[index];
   }
 
   function findFormWithID(id) {
-    const index = formAnswers.findIndex(el => el.id === id);
-    return formAnswers[index];
+    const index = forms.findIndex(el => el.id === id);
+    return forms[index];
   }
 
   function handleForm(id) {
@@ -75,7 +101,7 @@ export const TableContent = props => {
       toast({
         title: 'Error',
         description: `Your NFT has already been minted.
-            FormID: ${id}             
+            FormID: ${id}
             NFT Hash: ${findMintedNFTById(id).hash}`,
         status: 'error',
         isClosable: true,
@@ -169,49 +195,87 @@ export const TableContent = props => {
     }
   }
   return (
-    <Table my="8" borderWidth="1px" fontSize="sm">
-      <Thead bg={mode('gray.50', 'gray.800')}>
-        <Tr>
-          {columns.map((column, index) => (
-            <Th whiteSpace="nowrap" scope="col" key={index}>
-              {column.Header}
-            </Th>
-          ))}
-          <Th />
-        </Tr>
-      </Thead>
-      <Tbody>
-        {formAnswers.map((element, i) => (
-          <Tr key={i}>
-            {columns.map((column, index) => {
-              const item = element.answers.find(col => {
-                if (col.field) {
-                  return col.field.ref === column.accessor;
-                } else {
-                  return col.id === column.accessor;
-                }
-              });
-              const cell = item ? handleTypeFormField(item) : 'N/A';
-
-              return (
-                <Td whiteSpace="nowrap" key={index}>
-                  {cell}
-                </Td>
-              );
-            })}
-            <Td textAlign="right">
-              <Button
-                size="sm"
-                colorScheme="teal"
-                disabled={disable}
-                onClick={() => mintNFTButton(element.id)}
-              >
-                Mint
-              </Button>
-            </Td>
+    <>
+      <Table my="8" borderWidth="1px" fontSize="sm">
+        <Thead bg={mode('gray.50', 'gray.800')}>
+          <Tr>
+            {columns.map((column, index) => (
+              <Th whiteSpace="nowrap" scope="col" key={index}>
+                {column.Header}
+              </Th>
+            ))}
+            <Th />
           </Tr>
-        ))}
-      </Tbody>
-    </Table>
+        </Thead>
+        <Tbody>
+          {
+            forms.map((form, i) => (
+              <Tr key={i} spacing={5}>
+                {
+                  columns.map((column, index) => {
+                    const item = form.answers.find(col => {
+                      if (col.field) {
+                        return col.field.ref === column.accessor;
+                      } else {
+                        return col.id === column.accessor;
+                      }
+                    });
+                    const cell = item ? handleTypeFormField(item) : 'N/A';
+
+                    return (
+                      <Td whiteSpace="nowrap" key={index}>
+                        {cell}
+                      </Td>
+                    );
+                  })
+                }
+                <Td textAlign="right">
+                  <ButtonGroup spacing="3">
+                    <Button
+                      size="sm"
+                      colorScheme="teal"
+                      onClick={() => mintNFTButton(form.id)}
+                    >
+                      Mint
+                    </Button>
+                    <Button
+                      size="sm"
+                      colorScheme="teal"
+                      variant="outline"
+                      onClick={() => setModalandOpen(form.answers)}>
+                      View
+                    </Button>
+                  </ButtonGroup>
+                </Td>
+              </Tr>
+            ))
+          }
+        </Tbody>
+      </Table>
+
+      <Modal isOpen={isOpen} size="xl" onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent minWidth="1000px">
+          <FlipCard721 />
+          <ModalHeader>
+            {modalTitle}
+            <Heading size="xs">
+              Product - {modalDescription}
+            </Heading>
+          </ModalHeader>
+
+          <ModalCloseButton />
+          <ModalBody minWidth="600px">
+            <CardWithContent answers={modalContentDisplay} />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
