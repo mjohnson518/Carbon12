@@ -80,6 +80,7 @@ export const TableContent = props => {
         status: 'error',
         isClosable: true,
       });
+      return false;
     }
   }
 
@@ -142,20 +143,24 @@ export const TableContent = props => {
     setDisable(true);
     try {
       const form = handleForm(id);
-      const dataUpload = await uploadToIPFS(form);
-      const qrCode = getQrCode(dataUpload);
-      let tokenCounter = 0;
+      if (form) {
+        const dataUpload = await uploadToIPFS(form);
+        const qrCode = getQrCode(dataUpload);
+        let tokenCounter = 0;
 
-      const metadata = {
-        id: tokenCounter,
-        form_number: id,
-        formData_url: dataUpload,
-        image: qrCode,
-        time_stamp: Date.now(),
-      };
+        const metadata = {
+          id: tokenCounter,
+          form_number: id,
+          formData_url: dataUpload,
+          image: qrCode,
+          time_stamp: Date.now(),
+        };
 
-      const metaDataUpload = await uploadToIPFS(metadata);
-      mintNFT(metaDataUpload, id).then(response => setDisable(false));
+        const metaDataUpload = await uploadToIPFS(metadata);
+        mintNFT(metaDataUpload, id).then(response => setDisable(false));
+      } else {
+        setDisable(false);
+      }
     } catch (err) {
       console.log(err);
       setDisable(false);
