@@ -24,6 +24,7 @@ import React, { useState } from 'react';
 
 import { FlipCard721 } from '../ImageNFT/FlipCard721';
 
+import { getProvider } from '../../helpers/getProvider'
 import {
   columns,
   getFormData,
@@ -31,13 +32,11 @@ import {
   parseAnswers,
 } from './typeform';
 
-import { ethers } from 'ethers';
-import Capture12Artifact from '../../contracts/Capture12.json';
-import contractAddresses from '../../contracts/contract-address.json';
 import { CardWithContent } from '../CardWithContent';
 
 let tokenCounter = 0;
-export const TableContent = props => {
+
+export const TableContent = (_) => {
   const formsData = getFormData() || [];
   const toast = useToast();
   const forms = formsData.map(form => {
@@ -47,22 +46,13 @@ export const TableContent = props => {
     };
   });
 
+  const { contract, signer } = getProvider("Carbon12")
+
   const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
   const [cid, setCID] = useState({});
-  const [receipt, setreceipt] = useState({});
+  const [receipts, setReceipts] = useState([]);
   const [mintedNfts, setmintedNfts] = useState([]);
-  // const  window.ethereum.enable();
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-  const [signer, setSigner] = useState(provider.getSigner(0));
-  const [contract, setContract] = useState(() => {
-    return new ethers.Contract(
-      contractAddresses.Capture12,
-      Capture12Artifact.abi,
-      signer
-    );
-  });
 
   // modal
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -89,22 +79,24 @@ export const TableContent = props => {
     return forms[index];
   }
 
+  const callToast = (title, description, status) => {
+    toast({
+      title: title,
+      description: description,
+      status: status,
+      isClosable: true,
+    });
+  }
+
   function handleForm(id) {
-    // check if questionaire has already been minted
     if (!findMintedNFTById(id)) {
       const form = findFormWithID(id);
-      // manipulate questionaire data
       const answersObj = parseAnswers(form.answers);
       return answersObj;
     } else {
-      toast({
-        title: 'Error',
-        description: `Your NFT has already been minted.
-            FormID: ${id}
-            NFT Hash: ${findMintedNFTById(id).hash}`,
-        status: 'error',
-        isClosable: true,
-      });
+      const description = `Your NFT has already been minted. FormID: ${id} NFT Hash: ${findMintedNFTById(id).hash}`
+      callToast('Error', description, 'error')
+
       return false;
     }
   }
@@ -116,47 +108,31 @@ export const TableContent = props => {
       setIpfsURI(res.data.ipfsJsonLink);
       return res.data.ipfsJsonLink;
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: `Something went wrong with your upload to IPFS: ${err.message}`,
-        status: 'error',
-        isClosable: true,
-      });
+      callToast('Error', `Something went wrong with your upload to IPFS: ${err.message}`, 'error')
     }
-    // store questionaire in localstorage
   }
 
   async function mintNFT(ipfsuri, id) {
     try {
       const tx = await contract.safeMint(signer.getAddress(), ipfsuri);
-      //console.log(tx);
+
       const txMessage = `${tx.hash} transaction is minting your NFT`;
-      toast({
-        title: 'Minted Carbon12 NFT',
-        description: txMessage,
-        status: 'success',
-        isClosable: true,
-      });
+      callToast('Minted Carbon12 NFT', txMessage, 'success');
+
       const receipt = await tx.wait();
-      setmintedNfts(arr => [
+      setReceipts([...receipts, receipt])
+
+      setmintedNfts((_) => [
         ...mintedNfts,
         { id: id, hash: receipt.to, ipfsURI: ipfsuri },
       ]);
+
       const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`;
-      toast({
-        title: 'Minted Carbon12 NFT',
-        description: receiptMessage,
-        status: 'success',
-        isClosable: true,
-      });
+      callToast('Minted Carbon12 NFT', receiptMessage, 'success');
+
       console.log('id', id, 'hash', receipt.to, 'metadata uri', ipfsuri);
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: `Something went wrong with your minting: ${err.message}`,
-        status: 'error',
-        isClosable: true,
-      });
+      callToast('Error', `Something went wrong with your minting: ${err.message}`, 'error')
     }
   }
 
@@ -181,9 +157,8 @@ export const TableContent = props => {
         };
 
         const metaDataUpload = await uploadToIPFS(metadata);
-        mintNFT(metaDataUpload, id).then(response => {
-          setDisable(false);
-        });
+        mintNFT(metaDataUpload, id).then((_) => setDisable(false));
+
         tokenCounter += 1;
       } else {
         setDisable(false);
