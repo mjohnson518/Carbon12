@@ -17,7 +17,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Heading,
-  ButtonGroup
+  ButtonGroup,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useState } from 'react';
@@ -37,7 +37,7 @@ import contractAddresses from '../../contracts/contract-address.json';
 import { CardWithContent } from '../CardWithContent';
 
 let tokenCounter = 0;
-export const TableContent = (props) => {
+export const TableContent = props => {
   const formsData = getFormData() || [];
   const toast = useToast();
   const forms = formsData.map(form => {
@@ -47,7 +47,6 @@ export const TableContent = (props) => {
     };
   });
 
-
   const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
   const [cid, setCID] = useState({});
@@ -56,7 +55,7 @@ export const TableContent = (props) => {
   // const  window.ethereum.enable();
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  const [ signer, setSigner ] = useState(provider.getSigner(0));
+  const [signer, setSigner] = useState(provider.getSigner(0));
   const [contract, setContract] = useState(() => {
     return new ethers.Contract(
       contractAddresses.Capture12,
@@ -66,18 +65,18 @@ export const TableContent = (props) => {
   });
 
   // modal
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [ modalTitle, setModalTitle ] = useState('')
-  const [ modalDescription, setModalDescription] = useState('')
-  const [ modalContentDisplay, setModalContentDisplay ] = useState([])
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalDescription, setModalDescription] = useState('');
+  const [modalContentDisplay, setModalContentDisplay] = useState([]);
 
   function setModalandOpen(item) {
-    const companyAttribute = item.find((i) => i.field.ref === 'companyName')
-    const productAttribute = item.find((i) => i.field.ref === 'productName')
-    setModalTitle(companyAttribute[companyAttribute.type])
-    setModalDescription(productAttribute[productAttribute.type])
-    setModalContentDisplay(item)
-    onOpen()
+    const companyAttribute = item.find(i => i.field.ref === 'companyName');
+    const productAttribute = item.find(i => i.field.ref === 'productName');
+    setModalTitle(companyAttribute[companyAttribute.type]);
+    setModalDescription(productAttribute[productAttribute.type]);
+    setModalContentDisplay(item);
+    onOpen();
   }
 
   function findMintedNFTById(id) {
@@ -208,48 +207,46 @@ export const TableContent = (props) => {
           </Tr>
         </Thead>
         <Tbody>
-          {
-            forms.map((form, i) => (
-              <Tr key={i} spacing={5}>
-                {
-                  columns.map((column, index) => {
-                    const item = form.answers.find(col => {
-                      if (col.field) {
-                        return col.field.ref === column.accessor;
-                      } else {
-                        return col.id === column.accessor;
-                      }
-                    });
-                    const cell = item ? handleTypeFormField(item) : 'N/A';
+          {forms.map((form, i) => (
+            <Tr key={i} spacing={5}>
+              {columns.map((column, index) => {
+                const item = form.answers.find(col => {
+                  if (col.field) {
+                    return col.field.ref === column.accessor;
+                  } else {
+                    return col.id === column.accessor;
+                  }
+                });
+                const cell = item ? handleTypeFormField(item) : 'N/A';
 
-                    return (
-                      <Td whiteSpace="nowrap" key={index}>
-                        {cell}
-                      </Td>
-                    );
-                  })
-                }
-                <Td textAlign="right">
-                  <ButtonGroup spacing="3">
-                    <Button
-                      size="sm"
-                      colorScheme="teal"
-                      onClick={() => mintNFTButton(form.id)}
-                    >
-                      Mint
-                    </Button>
-                    <Button
-                      size="sm"
-                      colorScheme="teal"
-                      variant="outline"
-                      onClick={() => setModalandOpen(form.answers)}>
-                      View
-                    </Button>
-                  </ButtonGroup>
-                </Td>
-              </Tr>
-            ))
-          }
+                return (
+                  <Td whiteSpace="nowrap" key={index}>
+                    {cell}
+                  </Td>
+                );
+              })}
+              <Td textAlign="right">
+                <ButtonGroup spacing="3">
+                  <Button
+                    size="sm"
+                    colorScheme="teal"
+                    disabled={disable}
+                    onClick={() => mintNFTButton(form.id)}
+                  >
+                    Mint
+                  </Button>
+                  <Button
+                    size="sm"
+                    colorScheme="teal"
+                    variant="outline"
+                    onClick={() => setModalandOpen(form.answers)}
+                  >
+                    View
+                  </Button>
+                </ButtonGroup>
+              </Td>
+            </Tr>
+          ))}
         </Tbody>
       </Table>
 
@@ -259,9 +256,7 @@ export const TableContent = (props) => {
           <FlipCard721 />
           <ModalHeader>
             {modalTitle}
-            <Heading size="xs">
-              Product - {modalDescription}
-            </Heading>
+            <Heading size="xs">Product - {modalDescription}</Heading>
           </ModalHeader>
 
           <ModalCloseButton />
