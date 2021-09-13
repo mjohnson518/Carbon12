@@ -36,7 +36,7 @@ export const TableContent = props => {
 
   // const formIDs = forms.map(form => form.landing_id);
 
-  const [qrCodeAddress, setqrCodeAddress] = useState({});
+  const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
   const [cid, setCID] = useState({});
   const [receipt, setreceipt] = useState({});
@@ -139,6 +139,7 @@ export const TableContent = props => {
   }
 
   async function mintNFTButton(id) {
+    setDisable(true);
     try {
       const form = handleForm(id);
       const dataUpload = await uploadToIPFS(form);
@@ -154,12 +155,12 @@ export const TableContent = props => {
       };
 
       const metaDataUpload = await uploadToIPFS(metadata);
-      mintNFT(metaDataUpload, id);
+      mintNFT(metaDataUpload, id).then(response => setDisable(false));
     } catch (err) {
       console.log(err);
+      setDisable(false);
     }
   }
-
   return (
     <Table my="8" borderWidth="1px" fontSize="sm">
       <Thead bg={mode('gray.50', 'gray.800')}>
@@ -195,6 +196,7 @@ export const TableContent = props => {
               <Button
                 size="sm"
                 colorScheme="teal"
+                disabled={disable}
                 onClick={() => mintNFTButton(element.id)}
               >
                 Mint
