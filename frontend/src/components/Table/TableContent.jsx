@@ -23,7 +23,7 @@ import {
 import { ethers } from 'ethers';
 import Capture12Artifact from '../../contracts/Capture12.json';
 import contractAddresses from '../../contracts/contract-address.json';
-
+let tokenCounter = 0;
 export const TableContent = props => {
   const forms = getFormData() || [];
   const toast = useToast();
@@ -147,7 +147,6 @@ export const TableContent = props => {
       if (form) {
         const dataUpload = await uploadToIPFS(form);
         const qrCode = getQrCode(dataUpload);
-        let tokenCounter = 0;
 
         const metadata = {
           id: tokenCounter,
@@ -160,8 +159,8 @@ export const TableContent = props => {
         const metaDataUpload = await uploadToIPFS(metadata);
         mintNFT(metaDataUpload, id).then(response => {
           setDisable(false);
-          tokenCounter++;
         });
+        tokenCounter += 1;
       } else {
         setDisable(false);
       }
