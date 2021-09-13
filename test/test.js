@@ -58,4 +58,34 @@ describe("Capture12", function () {
     const ownerOf = await capture12.ownerOf(0);
     assert(ownerOf === addr1.address);
   });
+  it("should transfer token 0 to owner when connected to addr1", async function () {
+    const tx = await capture12
+      .connect(addr1)
+      .transferFrom(addr1.address, owner.address, 0);
+    const ownerOf = await capture12.ownerOf(0);
+    assert(ownerOf === owner.address);
+  });
+  it("should pause token transfer and minting", async function () {
+    const tx = await capture12.pause();
+    const transfer = await capture12
+      .transferFrom(owner.address, addr1.address, 0)
+      .catch((err) => console.log("transfer reverted"));
+    const mint = capture12
+      .safeMint(addr1.address, testUri)
+      .catch((err) => console.log("minting reverted"));
+    const balance = await capture12.balanceOf(addr1.address);
+
+    assert(balance.toNumber() === 1);
+  });
+  it("should unpause the contract", async function () {
+    const tx = await capture12.unpause();
+    const transfer = await capture12
+      .transferFrom(owner.address, addr1.address, 0)
+      .catch((err) => console.log("transfer reverted"));
+    const mint = capture12
+      .safeMint(addr1.address, testUri)
+      .catch((err) => console.log("minting reverted"));
+    const balance = await capture12.balanceOf(addr1.address);
+    assert(balance.toNumber() === 3);
+  });
 });
