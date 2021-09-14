@@ -149,8 +149,10 @@ export const TableContent = _ => {
     }
   }
 
+
   function getQrCode(ipfsUri) {
     return `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsUri}`;
+
   }
 
   async function mintNFTButton(id) {
