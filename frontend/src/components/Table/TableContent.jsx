@@ -149,8 +149,8 @@ export const TableContent = _ => {
     }
   }
 
-  function getQrCode(id) {
-    return `https://api.qrserver.com/v1/create-qr-code/?data=${process.env.HOST}/${id}`;
+  function getQrCode(ipfsUri) {
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsUri}`;
   }
 
   async function mintNFTButton(id) {
@@ -158,12 +158,13 @@ export const TableContent = _ => {
     try {
       const form = checkForm(id);
       if (form) {
-        const qrCode = getQrCode(id);
+        const formUpload = await uploadToIPFS(form);
+        const qrCode = getQrCode(formUpload);
 
         const metadata = {
           id: tokenCounter,
           form_number: id,
-          formData_url: form,
+          formData_url: formUpload,
           image: qrCode,
           time_stamp: Date.now(),
         };
@@ -180,6 +181,7 @@ export const TableContent = _ => {
       setDisable(false);
     }
   }
+
   return (
     <>
       <Table my="8" borderWidth="1px" fontSize="sm">
