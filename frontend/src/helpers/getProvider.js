@@ -1,11 +1,12 @@
 import { ethers } from 'ethers';
+
 import Capture12Artifact from '../contracts/Capture12.json';
 import contractAddresses from '../contracts/contract-address.json';
 
-export const getProvider = (contractName) => {
+export const GetProvider = (contractName) => {
   let contract;
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const signer =provider.getSigner(0);
+  const signer = provider.getSigner(0);
 
   switch (contractName) {
     case 'Capture12':
@@ -27,6 +28,6 @@ export const getProvider = (contractName) => {
   return {
     provider,
     contract,
-    signer
+    signer,
   }
 }

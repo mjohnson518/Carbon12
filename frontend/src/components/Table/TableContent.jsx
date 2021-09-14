@@ -1,5 +1,14 @@
 import {
   Button,
+  ButtonGroup,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Table,
   Tbody,
   Td,
@@ -9,30 +18,17 @@ import {
   useColorModeValue as mode,
   useDisclosure,
   useToast,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Heading,
-  ButtonGroup,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
-import { FlipCard721 } from '../ImageNFT/FlipCard721';
-
-import { getProvider } from '../../helpers/getProvider';
-import {
-  columns,
-  getFormData,
-  handleTypeFormField,
-  parseAnswers,
-} from './typeform';
-
+import { GetProvider } from '../../helpers/GetProvider';
+import { getNFTData, storeNftData } from '../../helpers/nftStorage';
 import { CardWithContent } from '../CardWithContent';
+import { FlipCard721 } from '../ImageNFT/FlipCard721';
+import { columns, getFormData, handleTypeFormField, parseAnswers } from './typeform';
+
 
 let tokenCounter = 0;
 
@@ -46,7 +42,9 @@ export const TableContent = _ => {
     };
   });
 
-  const { contract, signer } = getProvider('Carbon12');
+  const { contract, signer, provider } = GetProvider("Carbon12")
+
+  const nftDatas = getNFTData();
 
   const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
@@ -59,6 +57,14 @@ export const TableContent = _ => {
   const [modalTitle, setModalTitle] = useState('');
   const [modalDescription, setModalDescription] = useState('');
   const [modalContentDisplay, setModalContentDisplay] = useState([]);
+
+  function mintIsDisabled(form) {
+    return nftDatas.find((nft) => nft.id === form.id)
+  }
+
+  function viewIsDisabled(form) {
+    return !nftDatas.some((nft) => nft.id === form.id)
+  }
 
   function setModalandOpen(item) {
     const companyAttribute = item.find(i => i.field.ref === 'companyName');
@@ -123,7 +129,7 @@ export const TableContent = _ => {
 
   async function mintNFT(ipfsuri, id) {
     try {
-      const tx = await contract.safeMint(signer.getAddress(), ipfsuri);
+      const tx = await contract.safeMint(signer.getAddress(), ipfsuri)
 
       const txMessage = `${tx.hash} transaction is minting your NFT`;
       callToast('Minted Carbon12 NFT', txMessage, 'success');
@@ -131,7 +137,7 @@ export const TableContent = _ => {
       const receipt = await tx.wait();
       setReceipts([...receipts, receipt]);
 
-      setmintedNfts(_ => [
+      setmintedNfts([
         ...mintedNfts,
         { id: id, hash: receipt.to, ipfsURI: ipfsuri },
       ]);
@@ -139,7 +145,8 @@ export const TableContent = _ => {
       const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`;
       callToast('Minted Carbon12 NFT', receiptMessage, 'success');
 
-      console.log('id', id, 'hash', receipt.to, 'metadata uri', ipfsuri);
+      storeNftData({id: id, to: receipt.from, metadataUri: ipfsuri, transactionHash: receipt.transactionHash})
+
     } catch (err) {
       callToast(
         'Error',
@@ -172,7 +179,7 @@ export const TableContent = _ => {
         };
 
         const metaDataUpload = await uploadToIPFS(metadata);
-        mintNFT(metaDataUpload, id).then(_ => setDisable(false));
+        await mintNFT(metaDataUpload, id).then(() => setDisable(false))
 
         tokenCounter += 1;
       } else {
@@ -218,22 +225,28 @@ export const TableContent = _ => {
               })}
               <Td textAlign="right">
                 <ButtonGroup spacing="3">
-                  <Button
-                    size="sm"
-                    colorScheme="teal"
-                    disabled={disable}
-                    onClick={() => mintNFTButton(form.id)}
-                  >
-                    Mint
-                  </Button>
-                  <Button
-                    size="sm"
-                    colorScheme="teal"
-                    variant="outline"
-                    onClick={() => setModalandOpen(form.answers)}
-                  >
-                    View
-                  </Button>
+                  {
+                    mintIsDisabled(form) || disable ?
+                      <Button size="sm" colorScheme="teal" isDisabled>Mint</Button> :
+                      <Button
+                        size="sm"
+                        colorScheme="teal"
+                        onClick={() => mintNFTButton(form.id)}>
+                        Mint
+                      </Button>
+                  }
+                  {
+                    viewIsDisabled(form) ?
+                      <Button size="sm" colorScheme="teal" variant="outline" isDisabled>View</Button> :
+                      <RouterLink to={`/carbon12/${form.id}`}>
+                        <Button
+                          size="sm"
+                          colorScheme="teal"
+                          variant="outline">
+                          View
+                        </Button>
+                      </RouterLink>
+                  }
                 </ButtonGroup>
               </Td>
             </Tr>

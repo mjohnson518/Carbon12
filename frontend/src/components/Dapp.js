@@ -1,17 +1,15 @@
-import { Container, useToast, VStack } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { useToast, VStack } from '@chakra-ui/react';
+import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
 import { Table } from '../components/Table';
-import Capture12Artifact from '../contracts/Capture12.json';
-import contractAddresses from '../contracts/contract-address.json';
+import { GetProvider } from '../helpers/GetProvider';
+import { getNFTData, storeNftData } from '../helpers/nftStorage';
 import { ConnectWallet } from './ConnectWallet';
 import { Loading } from './Loading';
 import { Logo } from './Logo';
 import { NoWalletDetected } from './NoWalletDetected';
-import { TransactionErrorMessage } from './TransactionErrorMessage';
 import TypeFormIFrame from './TypeformIFrame';
-import { WaitingForTransactionMessage } from './WaitingForTransactionMessage';
 
 // We'll use ethers to interact with the Ethereum network and our contract
 // We import the contract's artifacts and address here, as we are going to be
@@ -43,21 +41,30 @@ export const Dapp = (props) => {
   const [ selectedAddress, setSelectedAddress] = useState(null)
   const [ tokenData, setTokenData ] = useState({})
   const [ pollDataInterval, setPollDataInterval ] = useState(null);
-  const [ signer, setSigner ] = useState(localProvider.getSigner(0))
 
-  const [ nft721Contract, _ ] = useState(() => {
-    return new ethers.Contract(
-      contractAddresses.Capture12,
-      Capture12Artifact.abi,
-      signer
-    );
+  const { contract, signer } = GetProvider();
+
+  contract.on('NFTMinted(uint256,address)', (tid, owner, other) => {
+    const transactionHash = other.transactionHash
+    const nftDatas = getNFTData();
+    const nftData = nftDatas.find((d) => d.transactionHash === transactionHash)
+    const tokenId = BigNumber.from(tid).toNumber();
+
+    const newNftData = {
+      ...nftData,
+      tokenId,
+      owner,
+      transactionHash
+    }
+
+    storeNftData(newNftData)
   })
 
   // The next two methods just read from the contract and store the results
   // in the component state.
   const getTokenData = async() => {
-    const name = await nft721Contract.name();
-    const symbol = await nft721Contract.symbol();
+    const name = await contract.name();
+    const symbol = await contract.symbol();
 
     setTokenData({ ...tokenData, name, symbol })
   }
@@ -201,7 +208,7 @@ export const Dapp = (props) => {
     <VStack>
       <Logo bodyLogo="true" />
       <TypeFormIFrame />
-      <Table />
+      <Table/>
     </VStack>
   )
 }
