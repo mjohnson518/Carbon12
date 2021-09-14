@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 
 import { FlipCard721 } from '../ImageNFT/FlipCard721';
 
-import { getProvider } from '../../helpers/getProvider'
+import { getProvider } from '../../helpers/getProvider';
 import {
   columns,
   getFormData,
@@ -36,7 +36,7 @@ import { CardWithContent } from '../CardWithContent';
 
 let tokenCounter = 0;
 
-export const TableContent = (_) => {
+export const TableContent = _ => {
   const formsData = getFormData() || [];
   const toast = useToast();
   const forms = formsData.map(form => {
@@ -46,7 +46,7 @@ export const TableContent = (_) => {
     };
   });
 
-  const { contract, signer } = getProvider("Carbon12")
+  const { contract, signer } = getProvider('Carbon12');
 
   const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
@@ -86,7 +86,7 @@ export const TableContent = (_) => {
       status: status,
       isClosable: true,
     });
-  }
+  };
 
   function handleForm(id) {
     if (!findMintedNFTById(id)) {
@@ -94,8 +94,10 @@ export const TableContent = (_) => {
       const answersObj = parseAnswers(form.answers);
       return answersObj;
     } else {
-      const description = `Your NFT has already been minted. FormID: ${id} NFT Hash: ${findMintedNFTById(id).hash}`
-      callToast('Error', description, 'error')
+      const description = `Your NFT has already been minted. FormID: ${id} NFT Hash: ${
+        findMintedNFTById(id).hash
+      }`;
+      callToast('Error', description, 'error');
 
       return false;
     }
@@ -108,7 +110,11 @@ export const TableContent = (_) => {
       setIpfsURI(res.data.ipfsJsonLink);
       return res.data.ipfsJsonLink;
     } catch (err) {
-      callToast('Error', `Something went wrong with your upload to IPFS: ${err.message}`, 'error')
+      callToast(
+        'Error',
+        `Something went wrong with your upload to IPFS: ${err.message}`,
+        'error'
+      );
     }
   }
 
@@ -120,9 +126,9 @@ export const TableContent = (_) => {
       callToast('Minted Carbon12 NFT', txMessage, 'success');
 
       const receipt = await tx.wait();
-      setReceipts([...receipts, receipt])
+      setReceipts([...receipts, receipt]);
 
-      setmintedNfts((_) => [
+      setmintedNfts(_ => [
         ...mintedNfts,
         { id: id, hash: receipt.to, ipfsURI: ipfsuri },
       ]);
@@ -132,12 +138,16 @@ export const TableContent = (_) => {
 
       console.log('id', id, 'hash', receipt.to, 'metadata uri', ipfsuri);
     } catch (err) {
-      callToast('Error', `Something went wrong with your minting: ${err.message}`, 'error')
+      callToast(
+        'Error',
+        `Something went wrong with your minting: ${err.message}`,
+        'error'
+      );
     }
   }
 
   function getQrCode(ipfsUri) {
-    return `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsUri}&size=100x100`;
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${process.env.HOST}/${form.id}`;
   }
 
   async function mintNFTButton(id) {
@@ -157,7 +167,7 @@ export const TableContent = (_) => {
         };
 
         const metaDataUpload = await uploadToIPFS(metadata);
-        mintNFT(metaDataUpload, id).then((_) => setDisable(false));
+        mintNFT(metaDataUpload, id).then(_ => setDisable(false));
 
         tokenCounter += 1;
       } else {
