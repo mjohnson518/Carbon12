@@ -89,10 +89,14 @@ export const TableContent = _ => {
   };
 
   function handleForm(id) {
+    const form = findFormWithID(id);
+    const answersObj = parseAnswers(form.answers);
+    return answersObj;
+  }
+
+  function checkForm(id) {
     if (!findMintedNFTById(id)) {
-      const form = findFormWithID(id);
-      const answersObj = parseAnswers(form.answers);
-      return answersObj;
+      return handleForm(id);
     } else {
       const description = `Your NFT has already been minted. FormID: ${id} NFT Hash: ${
         findMintedNFTById(id).hash
@@ -102,7 +106,6 @@ export const TableContent = _ => {
       return false;
     }
   }
-
   async function uploadToIPFS(object) {
     try {
       let res = await axios.post('/upload-to-ipfs', object);
@@ -146,22 +149,21 @@ export const TableContent = _ => {
     }
   }
 
-  function getQrCode(ipfsUri) {
-    return `https://api.qrserver.com/v1/create-qr-code/?data=${process.env.HOST}/${form.id}`;
+  function getQrCode(id) {
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${process.env.HOST}/${id}`;
   }
 
   async function mintNFTButton(id) {
     setDisable(true);
     try {
-      const form = handleForm(id);
+      const form = checkForm(id);
       if (form) {
-        const dataUpload = await uploadToIPFS(form);
-        const qrCode = getQrCode(dataUpload);
+        const qrCode = getQrCode(id);
 
         const metadata = {
           id: tokenCounter,
           form_number: id,
-          formData_url: dataUpload,
+          formData_url: form,
           image: qrCode,
           time_stamp: Date.now(),
         };
