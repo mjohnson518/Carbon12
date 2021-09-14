@@ -1,6 +1,5 @@
-import { useBoolean } from '@chakra-ui/hooks';
 import { ethers } from 'ethers';
-import { useCallback, useEffect } from 'react';
+
 import Capture12Artifact from '../contracts/Capture12.json';
 import contractAddresses from '../contracts/contract-address.json';
 

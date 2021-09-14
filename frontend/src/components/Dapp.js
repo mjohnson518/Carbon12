@@ -1,21 +1,15 @@
-import { Container, useToast, VStack } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { useToast, VStack } from '@chakra-ui/react';
+import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
 import { Table } from '../components/Table';
-import Capture12Artifact from '../contracts/Capture12.json';
-import contractAddresses from '../contracts/contract-address.json';
+import { GetProvider } from '../helpers/GetProvider';
+import { getNFTData, storeNftData } from '../helpers/nftStorage';
 import { ConnectWallet } from './ConnectWallet';
 import { Loading } from './Loading';
 import { Logo } from './Logo';
 import { NoWalletDetected } from './NoWalletDetected';
-import { TransactionErrorMessage } from './TransactionErrorMessage';
 import TypeFormIFrame from './TypeformIFrame';
-import { WaitingForTransactionMessage } from './WaitingForTransactionMessage';
-
-import { GetProvider } from '../helpers/GetProvider';
-import { BigNumber } from 'ethers'
-import { getNFTData, storeNftData } from '../helpers/nftStorage';
 
 // We'll use ethers to interact with the Ethereum network and our contract
 // We import the contract's artifacts and address here, as we are going to be
