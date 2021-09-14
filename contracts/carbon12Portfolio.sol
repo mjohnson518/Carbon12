@@ -19,7 +19,7 @@ interface IERC998ERC721BottomUp {
     function transferToParent(address _from, address _toContract, uint256 _toTokenId, uint256 _tokenId, bytes calldata _data) external;
 }
 
-contract Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEnumerable, ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable, ERC721Burnable{
+contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEnumerable, ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Ownable, ERC721Burnable{
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -35,6 +35,15 @@ contract Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEnumerable
     // token owner => (operator address => bool)
     mapping(address => mapping(address => bool)) internal tokenOwnerToOperators;
 
+     // return this.rootOwnerOf.selector ^ this.rootOwnerOfChild.selector ^
+    //   this.tokenOwnerOf.selector ^ this.ownerOfChild.selector;
+    bytes32 constant ERC998_MAGIC_VALUE = 0x00000000000000000000000000000000000000000000000000000000cd740db5;
+
+     //from zepellin ERC721Receiver.sol
+    //old version
+    bytes4 constant ERC721_RECEIVED_OLD = 0xf0b9e5ba;
+    //new version
+    bytes4 constant ERC721_RECEIVED_NEW = 0x150b7a02;
 
     function pause() public onlyOwner {
         _pause();
@@ -94,14 +103,8 @@ contract Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEnumerable
         return super.supportsInterface(interfaceId);
     }
     
-    // function magicValue () public returns(bytes4){
-    //    return this.rootOwnerOf.selector ^ this.rootOwnerOfChild.selector ^
-    //   this.tokenOwnerOf.selector ^ this.ownerOfChild.selector;
-    // }
-
-     // return this.rootOwnerOf.selector ^ this.rootOwnerOfChild.selector ^
-    //   this.tokenOwnerOf.selector ^ this.ownerOfChild.selector;
-    bytes32 constant ERC998_MAGIC_VALUE = 0x00000000000000000000000000000000000000000000000000000000cd740db5;
+        
+   
 
     // wrapper on minting new 721
     function mint(address _to, string calldata _ipfsUri) public returns (uint256) {
@@ -112,11 +115,7 @@ contract Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEnumerable
         _tokenIdCounter.increment();
         return tokenId;
     }
-    //from zepellin ERC721Receiver.sol
-    //old version
-    bytes4 constant ERC721_RECEIVED_OLD = 0xf0b9e5ba;
-    //new version
-    bytes4 constant ERC721_RECEIVED_NEW = 0x150b7a02;
+    
 
     ////////////////////////////////////////////////////////
     // ERC721 implementation
