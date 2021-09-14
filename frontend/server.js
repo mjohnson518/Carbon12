@@ -40,7 +40,7 @@ app.get('/typeform', async (req, res) => {
   await axios
     .get('https://api.typeform.com/forms/t4Wsz3R9/responses', {
       headers: {
-        Authorization: `Bearer C8vuMvr9qb3yBL2LaLr8ByGkNwuU382V8NCnr8w6G6UB`,
+        Authorization: `Bearer ${process.env.REACT_APP_TYPEFORM_PERSONAL_TOKEN}`,
         crossdomain: true,
         Accept: 'application/json',
         'Content-Type': 'application/json',
