@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 
 import { FlipCard721 } from '../ImageNFT/FlipCard721';
 
-import { getProvider } from '../../helpers/getProvider'
+import { getProvider } from '../../helpers/getProvider';
 import {
   columns,
   getFormData,
@@ -36,7 +36,7 @@ import { CardWithContent } from '../CardWithContent';
 
 let tokenCounter = 0;
 
-export const TableContent = (_) => {
+export const TableContent = _ => {
   const formsData = getFormData() || [];
   const toast = useToast();
   const forms = formsData.map(form => {
@@ -46,7 +46,7 @@ export const TableContent = (_) => {
     };
   });
 
-  const { contract, signer } = getProvider("Carbon12")
+  const { contract, signer } = getProvider('Carbon12');
 
   const [disable, setDisable] = useState(false);
   const [ipfsURI, setIpfsURI] = useState({});
@@ -86,21 +86,26 @@ export const TableContent = (_) => {
       status: status,
       isClosable: true,
     });
-  }
+  };
 
   function handleForm(id) {
+    const form = findFormWithID(id);
+    const answersObj = parseAnswers(form.answers);
+    return answersObj;
+  }
+
+  function checkForm(id) {
     if (!findMintedNFTById(id)) {
-      const form = findFormWithID(id);
-      const answersObj = parseAnswers(form.answers);
-      return answersObj;
+      return handleForm(id);
     } else {
-      const description = `Your NFT has already been minted. FormID: ${id} NFT Hash: ${findMintedNFTById(id).hash}`
-      callToast('Error', description, 'error')
+      const description = `Your NFT has already been minted. FormID: ${id} NFT Hash: ${
+        findMintedNFTById(id).hash
+      }`;
+      callToast('Error', description, 'error');
 
       return false;
     }
   }
-
   async function uploadToIPFS(object) {
     try {
       let res = await axios.post('/upload-to-ipfs', object);
@@ -108,7 +113,11 @@ export const TableContent = (_) => {
       setIpfsURI(res.data.ipfsJsonLink);
       return res.data.ipfsJsonLink;
     } catch (err) {
-      callToast('Error', `Something went wrong with your upload to IPFS: ${err.message}`, 'error')
+      callToast(
+        'Error',
+        `Something went wrong with your upload to IPFS: ${err.message}`,
+        'error'
+      );
     }
   }
 
@@ -120,9 +129,9 @@ export const TableContent = (_) => {
       callToast('Minted Carbon12 NFT', txMessage, 'success');
 
       const receipt = await tx.wait();
-      setReceipts([...receipts, receipt])
+      setReceipts([...receipts, receipt]);
 
-      setmintedNfts((_) => [
+      setmintedNfts(_ => [
         ...mintedNfts,
         { id: id, hash: receipt.to, ipfsURI: ipfsuri },
       ]);
@@ -132,32 +141,35 @@ export const TableContent = (_) => {
 
       console.log('id', id, 'hash', receipt.to, 'metadata uri', ipfsuri);
     } catch (err) {
-      callToast('Error', `Something went wrong with your minting: ${err.message}`, 'error')
+      callToast(
+        'Error',
+        `Something went wrong with your minting: ${err.message}`,
+        'error'
+      );
     }
   }
 
-  function getQrCode(ipfsUri) {
-    return `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsUri}&size=100x100`;
+  function getQrCode(id) {
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${process.env.HOST}/${id}`;
   }
 
   async function mintNFTButton(id) {
     setDisable(true);
     try {
-      const form = handleForm(id);
+      const form = checkForm(id);
       if (form) {
-        const dataUpload = await uploadToIPFS(form);
-        const qrCode = getQrCode(dataUpload);
+        const qrCode = getQrCode(id);
 
         const metadata = {
           id: tokenCounter,
           form_number: id,
-          formData_url: dataUpload,
+          formData_url: form,
           image: qrCode,
           time_stamp: Date.now(),
         };
 
         const metaDataUpload = await uploadToIPFS(metadata);
-        mintNFT(metaDataUpload, id).then((_) => setDisable(false));
+        mintNFT(metaDataUpload, id).then(_ => setDisable(false));
 
         tokenCounter += 1;
       } else {
