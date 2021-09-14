@@ -1,7 +1,9 @@
-import { Box, Flex, HStack, useColorModeValue as mode } from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, useColorModeValue as mode } from '@chakra-ui/react'
 import * as React from 'react';
 
 import { NavItem } from './NavItem';
+
+import { Link as RouterLink } from 'react-router-dom'
 
 const MobileNavMenu = (props) => {
   const { isOpen } = props
@@ -38,7 +40,18 @@ const DesktopNavMenu = () => (
       lg: 'flex',
     }}
   >
-    <NavItem.Desktop active label="Home" color={mode('gray.500', 'gray.500')}/>
+
+
+    <RouterLink to={`/`}>
+      <Button
+        size="lg"
+        m={4}
+        colorScheme="red"
+        color={mode('gray.500', 'teal.500')}
+        variant="outline">
+        Home
+      </Button>
+    </RouterLink>
     {/* <NavItem.Desktop icon={<HiMail />} label="Campaigns" />
     <NavItem.Desktop icon={<HiDuplicate />} label="Forms" />
     <NavItem.Desktop icon={<HiTemplate />} label="Sites" />

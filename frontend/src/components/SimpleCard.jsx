@@ -16,12 +16,11 @@ export const SimpleCard = (props) => {
           shadow="base"
         >
           <Box mb="5">
-            <Text as="h3" fontWeight="bold" fontSize="lg">
+            <Text as="h1" fontWeight="bold" fontSize="3xlg" pb={50}>
               { title }
             </Text>
-            <Text fontSize="lg" mt="1" color={mode('gray.600', 'gray.200')}>
-              { children }
-            </Text>
+
+            { children }
           </Box>
         </Box>
       </Box>

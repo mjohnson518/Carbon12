@@ -1,6 +1,6 @@
 import { useBoolean } from '@chakra-ui/hooks';
 import { Box, Center, SimpleGrid } from '@chakra-ui/layout';
-import { Button, Heading } from '@chakra-ui/react';
+import { Button, Heading, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { getNFTData } from '../helpers/nftStorage';
 import { CardWithContent } from './CardWithContent';
 import { FlipCard721 } from './ImageNFT/FlipCard721';
 import { Loading } from './Loading';
+import { SimpleCard } from './SimpleCard';
 import { getFormData } from './Table/typeform';
 import { viewCarbon12Decorator } from './ViewCarbon12Decorator';
 
@@ -61,11 +62,14 @@ export default function ViewCarbon12() {
 
   if (loading && Object.keys(contentDisplay).length === 0) {
     return (
-      <Box minHeight="800px">
-        <Center>
-          <Loading/>
+      <SimpleCard minHeight="800px" title="Resolving the IPFS Data" p="150px">
+        <Center mb="50px">
+          <Loading />
         </Center>
-      </Box>
+        <Text fontSize="18px" fontWeight="bold">
+          This could take a while...
+        </Text>
+      </SimpleCard>
     )
   }
 

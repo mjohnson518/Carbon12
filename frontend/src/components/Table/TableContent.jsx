@@ -237,7 +237,7 @@ export const TableContent = _ => {
                   }
                   {
                     viewIsDisabled(form) ?
-                      <Button size="sm" colorScheme="teal" isDisabled>Mint</Button> :
+                      <Button size="sm" colorScheme="teal" variant="outline" isDisabled>View</Button> :
                       <RouterLink to={`/carbon12/${form.id}`}>
                         <Button
                           size="sm"

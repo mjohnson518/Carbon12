@@ -30,11 +30,11 @@ export const TableActions = (props) => {
             <Input rounded="base" type="search" placeholder="Filter by name or email..." />
           </InputGroup>
         </FormControl> */}
-        <Select w={{ base: '300px', md: 'unset' }} rounded="base" size="sm" placeholder="All roles">
+        {/* <Select w={{ base: '300px', md: 'unset' }} rounded="base" size="sm" placeholder="All roles">
           <option>All roles</option>
           <option>UI Designers</option>
           <option>Marketing Directors</option>
-        </Select>
+        </Select> */}
       </HStack>
       <ButtonGroup size="sm" variant="outline">
         <Button
