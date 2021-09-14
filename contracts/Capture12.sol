@@ -17,6 +17,7 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
 
     constructor() ERC721("Capture12", "C12") {}
 
+    event NFTMinted(uint indexed tokenId, address indexed to);
     function pause() public onlyOwner {
         _pause();
     }
@@ -32,6 +33,9 @@ contract Capture12 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, Owna
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, _ipfsUri);
         _tokenIdCounter.increment();
+
+        emit NFTMinted(tokenId, address(to));
+
         return tokenId;
     }
 
