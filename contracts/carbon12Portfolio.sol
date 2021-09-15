@@ -92,6 +92,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         _safeMint(_to, tokenId);
         _setTokenURI(tokenId, _ipfsUri);
          tokenIdToTokenOwner[tokenId] = _to;
+         
         _tokenIdCounter.increment();       
         emit childNFTMinted(tokenId, address(_to));
         tokenOwnerToTokenCount[_to]++;
