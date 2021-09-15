@@ -91,9 +91,10 @@ describe("Carbon12Portfolio", function () {
     );
 
     const promise = await tx.wait();
-    const ownerOf = await carbon12Portfolio.rootOwnerOf(1);
-    const tokenOwnerof = await carbon12Portfolio.rootOwnerOf(2);
-    assert(ownerOf === tokenOwnerof, "token ");
+    const ownerOf1 = await carbon12Portfolio.rootOwnerOf(1);
+    const ownerof2 = await carbon12Portfolio.rootOwnerOf(2);
+    console.log("ownerOf1", ownerOf1, "ownerof2", ownerof2);
+    assert(ownerOf1 === ownerof2, "token ");
   });
 
   it("owner should only own 1 nft", async function () {
