@@ -26,7 +26,8 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
 
     constructor() ERC721("Carbon12Portfolio", "C12P") {}
 
-     // tokenId => token owner
+    
+    // tokenId => token owner
     mapping(uint256 => address) internal tokenIdToTokenOwner;
 
     // root token owner address => (tokenId => approved address)
@@ -34,6 +35,21 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
 
     // token owner => (operator address => bool)
     mapping(address => mapping(address => bool)) internal tokenOwnerToOperators;
+    
+    // tokenId => child contract
+    mapping(uint256 => address[]) private childContracts;
+
+    // tokenId => (child address => contract index+1)
+    mapping(uint256 => mapping(address => uint256)) private childContractIndex;
+
+    // tokenId => (child address => array of child tokens)
+    mapping(uint256 => mapping(address => uint256[])) private childTokens;
+
+    // tokenId => (child address => (child token => child index+1)
+    mapping(uint256 => mapping(address => mapping(uint256 => uint256))) private childTokenIndex;
+
+    // child address => childId => tokenId
+    mapping(address => mapping(uint256 => uint256)) internal childTokenOwner;
 
      // return this.rootOwnerOf.selector ^ this.rootOwnerOfChild.selector ^
     //   this.tokenOwnerOf.selector ^ this.ownerOfChild.selector;
@@ -53,16 +69,31 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         _unpause();
     }
 
-     function safeMint(address _to, string calldata _ipfsUri) public returns(uint){
+    event parentNFTMinted(uint indexed tokenId, address indexed to);
+    event childNFTMinted(uint indexed tokenId, address indexed to);
+
+    function mintParent(address _to, string calldata _ipfsUri) public returns(uint){
           
-        uint256 tokenId = _tokenIdCounter.current();
-        // require(_ipfsURI == whitelisted, "we should add some logic to whitelist this or something maybe?");
+        uint256 tokenId = _tokenIdCounter.current();     
         tokenIdToTokenOwner[tokenId] = _to;
         _safeMint(_to, tokenId);
         _setTokenURI(tokenId, _ipfsUri);        
         _tokenIdCounter.increment();
+        emit parentNFTMinted(tokenId, address(_to));
         return tokenId;
     }
+
+    function mintChild(address _to, string calldata _ipfsUri) public returns (uint256) {
+        uint256 tokenId = _tokenIdCounter.current();       
+        _safeMint(_to, tokenId);
+        _setTokenURI(tokenId, _ipfsUri);
+        _tokenIdCounter.increment();
+
+        emit childNFTMinted(tokenId, address(_to));
+
+        return tokenId;
+    }
+
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -101,21 +132,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
-    }
-    
-        
-   
-
-    // wrapper on minting new 721
-    function mint(address _to, string calldata _ipfsUri) public returns (uint256) {
-         uint256 tokenId = _tokenIdCounter.current();
-         tokenIdToTokenOwner[tokenId] = _to;
-        _safeMint(_to, tokenId);
-        _setTokenURI(tokenId, _ipfsUri);
-        _tokenIdCounter.increment();
-        return tokenId;
-    }
-    
+    }    
 
     ////////////////////////////////////////////////////////
     // ERC721 implementation
@@ -126,7 +143,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         assembly {size := extcodesize(_addr)}
         return size > 0;
     }
-
+     // returns the owner at the top of the tree of composables  
     function rootOwnerOf(uint256 _tokenId) public override view returns (bytes32 rootOwner) {
         return rootOwnerOfChild(address(0), _tokenId);
     }
@@ -171,10 +188,6 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         }
     }
 
-
-    // returns the owner at the top of the tree of composables   
-
-
     function approve(address _approved, uint256 _tokenId) public override {
         address rootOwner = address(uint160(uint256(rootOwnerOf(_tokenId))));
         require(rootOwner == msg.sender || tokenOwnerToOperators[rootOwner][msg.sender]);
@@ -199,11 +212,11 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         return tokenOwnerToOperators[_owner][_operator];
     }
 
-
+    //_from is the current owner address, _to will be the tokenId of the token you want to tranfer ownership to OR the wallet to tranfer to, _tokenId is the token you will be transfering
     function _transferFrom(address _from, address _to, uint256 _tokenId) private {
-        require(_from != address(0));
-        require(tokenIdToTokenOwner[_tokenId] == _from);
-        require(_to != address(0));
+        require(_from != address(0), "also not");
+        //require(tokenIdToTokenOwner[_tokenId] == _from);
+        require(_to != address(0), "not from dead address");
 
         if(msg.sender != _from) {
             (bool callSuccess, bytes memory data) = _from.staticcall(abi.encodeWithSelector(0xed81cdda, address(this), _tokenId));
@@ -225,7 +238,16 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         emit Transfer(_from, _to, _tokenId);
 
     }   
-    
+
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId) public override {
+        _transferFrom(_from, _to, _tokenId);
+        if (isContract(_to)) {
+            bytes4 retval = IERC721Receiver(_to).onERC721Received(msg.sender, _from, _tokenId, "");
+            require(retval == ERC721_RECEIVED_OLD, "retval invalid");
+        }
+    }
+
+    //_from = address that owns parent nft, _to = address that minted the child nft, _tokenId = childNft ID, _data = parent NFT ID
     function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes calldata _data) public override {
         _transferFrom(_from, _to, _tokenId);
         if (isContract(_to)) {
@@ -238,20 +260,6 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
     // ERC998ERC721 and ERC998ERC721Enumerable implementation
     ////////////////////////////////////////////////////////
 
-    // tokenId => child contract
-    mapping(uint256 => address[]) private childContracts;
-
-    // tokenId => (child address => contract index+1)
-    mapping(uint256 => mapping(address => uint256)) private childContractIndex;
-
-    // tokenId => (child address => array of child tokens)
-    mapping(uint256 => mapping(address => uint256[])) private childTokens;
-
-    // tokenId => (child address => (child token => child index+1)
-    mapping(uint256 => mapping(address => mapping(uint256 => uint256))) private childTokenIndex;
-
-    // child address => childId => tokenId
-    mapping(address => mapping(uint256 => uint256)) internal childTokenOwner;
 
     function removeChild(uint256 _tokenId, address _childContract, uint256 _childTokenId) private {
         uint256 tokenIndex = childTokenIndex[_tokenId][_childContract][_childTokenId];

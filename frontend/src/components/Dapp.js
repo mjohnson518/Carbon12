@@ -3,7 +3,7 @@ import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
 import { Table } from '../components/Table';
-import { GetProvider } from '../helpers/GetProvider';
+import { GetProvider } from '../helpers/getProvider';
 import { getNFTData, storeNftData } from '../helpers/nftStorage';
 import { ConnectWallet } from './ConnectWallet';
 import { Loading } from './Loading';
@@ -33,43 +33,45 @@ const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 //   3. Renders the whole application
 //
 
-export const Dapp = (props) => {
+export const Dapp = props => {
   const toast = useToast();
-  const localProvider = new ethers.providers.StaticJsonRpcProvider('http://127.0.0.1:8545/');
+  const localProvider = new ethers.providers.StaticJsonRpcProvider(
+    'http://127.0.0.1:8545/'
+  );
   // const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-  const [ selectedAddress, setSelectedAddress] = useState(null)
-  const [ tokenData, setTokenData ] = useState({})
-  const [ pollDataInterval, setPollDataInterval ] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [tokenData, setTokenData] = useState({});
+  const [pollDataInterval, setPollDataInterval] = useState(null);
 
   const { contract, signer } = GetProvider();
 
   contract.on('NFTMinted(uint256,address)', (tid, owner, other) => {
-    const transactionHash = other.transactionHash
+    const transactionHash = other.transactionHash;
     const nftDatas = getNFTData();
-    const nftData = nftDatas.find((d) => d.transactionHash === transactionHash)
+    const nftData = nftDatas.find(d => d.transactionHash === transactionHash);
     const tokenId = BigNumber.from(tid).toNumber();
 
     const newNftData = {
       ...nftData,
       tokenId,
       owner,
-      transactionHash
-    }
+      transactionHash,
+    };
 
-    storeNftData(newNftData)
-  })
+    storeNftData(newNftData);
+  });
 
   // The next two methods just read from the contract and store the results
   // in the component state.
-  const getTokenData = async() => {
+  const getTokenData = async () => {
     const name = await contract.name();
     const symbol = await contract.symbol();
 
-    setTokenData({ ...tokenData, name, symbol })
-  }
+    setTokenData({ ...tokenData, name, symbol });
+  };
 
-  const connectWallet = async() => {
+  const connectWallet = async () => {
     // This method is run when the user clicks the Connect. It connects the
     // dapp to the user's wallet, and initializes it.
 
@@ -85,13 +87,13 @@ export const Dapp = (props) => {
         status: 'error',
         position: 'top-right',
         isClosable: true,
-      })
+      });
 
       return;
     }
 
     setSelectedAddress(signer.getAddress());
-    await window.ethereum.enable()
+    await window.ethereum.enable();
 
     // We reinitialize it whenever the user changes their account.
     window.ethereum.on('accountsChanged', ([newAddress]) => {
@@ -112,7 +114,7 @@ export const Dapp = (props) => {
       stopPollingData();
       resetState();
     });
-  }
+  };
 
   useEffect(() => {
     try {
@@ -121,7 +123,7 @@ export const Dapp = (props) => {
     } catch (e) {
       console.error(e);
     }
-  }, [])
+  }, []);
 
   // The next two methods are needed to start and stop polling data. While
   // the data being polled here is specific to this example, you can use this
@@ -163,8 +165,8 @@ export const Dapp = (props) => {
 
   // This method resets the state
   function resetState() {
-    setSelectedAddress(null)
-    setTokenData({})
+    setSelectedAddress(null);
+    setTokenData({});
     setPollDataInterval(null);
   }
 
@@ -194,7 +196,7 @@ export const Dapp = (props) => {
   // Note that we pass it a callback that is going to be called when the user
   // clicks a button. This callback just calls the _connectWallet method.
   if (!selectedAddress) {
-    return (<ConnectWallet connectWallet={() => connectWallet()} />);
+    return <ConnectWallet connectWallet={() => connectWallet()} />;
   }
 
   // If the token data or the user's balance hasn't loaded yet, we show
@@ -208,7 +210,7 @@ export const Dapp = (props) => {
     <VStack>
       <Logo bodyLogo="true" />
       <TypeFormIFrame />
-      <Table/>
+      <Table />
     </VStack>
-  )
-}
+  );
+};
