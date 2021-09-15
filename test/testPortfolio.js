@@ -46,20 +46,71 @@ describe("Carbon12Portfolio", function () {
     );
   });
 
+  it("should mint achild and parent nft to addr1", async function () {
+    // const tx = await capture12
+    //   .safeMint(addr1.address, testUri)
+    //   .catch((err) => console.log(err));
+    const txp = await carbon12Portfolio.mintParent(addr1.address, testUri);
+    const txc = await carbon12Portfolio.mintChild(addr1.address, testUri);
+
+    const promiseP = await txp.wait();
+    const promiseC = await txc.wait();
+    // console.log(
+    //   "parent",
+    //   promiseP.events[0],
+    //   "child",
+    //   promiseC.events[0],
+    //   rootOwner
+    // );
+    assert(
+      (promiseP.events[0].args.to && promiseC.events[0].args.to) ===
+        addr1.address
+    );
+  });
+
   it("should return the number nft's owned by an address(owner)", async function () {
     const tx = await carbon12Portfolio.balanceOf(owner.address);
 
     assert(tx.toNumber() === 2);
   });
 
-  it("should transfer ownership of childNFT from owner to the ownerNFT", async function () {
+  it("should return the number nft's owned by an address(addr1)", async function () {
+    const tx = await carbon12Portfolio.balanceOf(addr1.address);
+
+    assert(tx.toNumber() === 2);
+  });
+
+  it("should transfer token 1 from owner to parent nft(id:2) owned by address 1", async function () {
+    const approve = await carbon12Portfolio
+      .approve(owner.address, 1)
+      .catch((err) => console.log("approval error", err));
     const tx = await carbon12Portfolio[
       `safeTransferFrom(address,address,uint256,bytes)`
-    ](owner.address, carbon12Portfolio.address, 1, 0).catch((err) =>
-      console.log(err)
+    ](owner.address, carbon12Portfolio.address, 1, 2).catch((err) =>
+      console.log("add child error", err)
     );
+
     const promise = await tx.wait();
-    console.log(promise.events[0]);
-    assert(0 === 0);
+    const ownerOf = await carbon12Portfolio.rootOwnerOf(1);
+    const tokenOwnerof = await carbon12Portfolio.rootOwnerOf(2);
+    assert(ownerOf === tokenOwnerof, "token ");
   });
+
+  it("owner should only own 1 nft", async function () {
+    const tx = await carbon12Portfolio
+      .balanceOf(owner.address)
+      .catch((err) => console.log(err));
+    assert(tx.toNumber() === 1);
+  });
+
+  // it("should NOT transfer ownership of childNFT from owner to the ownerNFT", async function () {
+  //   const tx = await carbon12Portfolio[
+  //     `safeTransferFrom(address,address,uint256,bytes)`
+  //   ](owner.address, carbon12Portfolio.address, 1, 0).catch((err) =>
+  //     console.log(err)
+  //   );
+  //   const promise = await tx.wait();
+  //   console.log(promise.events[0]);
+  //   assert(0 === 0);
+  // });
 });

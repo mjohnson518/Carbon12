@@ -48,6 +48,9 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
     // tokenId => (child address => (child token => child index+1)
     mapping(uint256 => mapping(address => mapping(uint256 => uint256))) private childTokenIndex;
 
+     // token owner address => token count
+    mapping(address => uint256) internal tokenOwnerToTokenCount;
+
     // child address => childId => tokenId
     mapping(address => mapping(uint256 => uint256)) internal childTokenOwner;
 
@@ -80,6 +83,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         _setTokenURI(tokenId, _ipfsUri);        
         _tokenIdCounter.increment();
         emit parentNFTMinted(tokenId, address(_to));
+        tokenOwnerToTokenCount[_to]++;
         return tokenId;
     }
 
@@ -87,10 +91,10 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         uint256 tokenId = _tokenIdCounter.current();       
         _safeMint(_to, tokenId);
         _setTokenURI(tokenId, _ipfsUri);
-        _tokenIdCounter.increment();
-
+         tokenIdToTokenOwner[tokenId] = _to;
+        _tokenIdCounter.increment();       
         emit childNFTMinted(tokenId, address(_to));
-
+        tokenOwnerToTokenCount[_to]++;
         return tokenId;
     }
 
@@ -188,9 +192,20 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         }
     }
 
+    function ownerOf(uint256 _tokenId) public override view returns (address tokenOwner) {
+        tokenOwner = tokenIdToTokenOwner[_tokenId];
+        require(tokenOwner != address(0));
+        return tokenOwner;
+    }
+
+    function balanceOf(address _tokenOwner) public override view returns (uint256) {
+        require(_tokenOwner != address(0));
+        return tokenOwnerToTokenCount[_tokenOwner];
+    }
+
     function approve(address _approved, uint256 _tokenId) public override {
         address rootOwner = address(uint160(uint256(rootOwnerOf(_tokenId))));
-        require(rootOwner == msg.sender || tokenOwnerToOperators[rootOwner][msg.sender]);
+        require(rootOwner == msg.sender || tokenOwnerToOperators[rootOwner][msg.sender], "rootOwnerOf(_tokenId) does not match mapping");
         rootOwnerAndTokenIdToApprovedAddress[rootOwner][_tokenId] = _approved;
         emit Approval(rootOwner, _approved, _tokenId);
     }
@@ -215,7 +230,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
     //_from is the current owner address, _to will be the tokenId of the token you want to tranfer ownership to OR the wallet to tranfer to, _tokenId is the token you will be transfering
     function _transferFrom(address _from, address _to, uint256 _tokenId) private {
         require(_from != address(0), "also not");
-        //require(tokenIdToTokenOwner[_tokenId] == _from);
+        require(tokenIdToTokenOwner[_tokenId] == _from, "token cannot be owned by sender");
         require(_to != address(0), "not from dead address");
 
         if(msg.sender != _from) {
@@ -234,10 +249,22 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
             delete rootOwnerAndTokenIdToApprovedAddress[_from][_tokenId];
             emit Approval(_from, address(0), _tokenId);
         }
-       
-        emit Transfer(_from, _to, _tokenId);
+
+        
+        // remove and transfer token
+        if (_from != _to) {
+            assert(tokenOwnerToTokenCount[_from] > 0);
+            tokenOwnerToTokenCount[_from]--;
+            tokenIdToTokenOwner[_tokenId] = _to;
+            tokenOwnerToTokenCount[_to]++;
+        }
+        emit Transfer(_from, _to, _tokenId);   
 
     }   
+
+    function transferFrom(address _from, address _to, uint256 _tokenId) public override {
+        _transferFrom(_from, _to, _tokenId);        
+    }
 
     function safeTransferFrom(address _from, address _to, uint256 _tokenId) public override {
         _transferFrom(_from, _to, _tokenId);
@@ -260,6 +287,32 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
     // ERC998ERC721 and ERC998ERC721Enumerable implementation
     ////////////////////////////////////////////////////////
 
+    // tokenId of composable, mapped to child contract address
+// child contract address mapped to child tokenId or amount
+    mapping(uint256 => mapping(address => uint256)) children;
+
+    
+            // add ERC-721 children by tokenId
+        // @requires owner to approve transfer from this contract
+        // call _childContract.approve(this, _childTokenId)
+        // where this is the address of the parent token contract
+        function addChild(
+        uint256 _tokenId,
+        address _childContract,
+        uint256 _childTokenId
+        )public {
+        // call the transfer function of the child contract
+        // if approve was called using the address of this contract
+        // _childTokenId will be transferred to this contract
+        // require(
+            _childContract.call(
+            abi.encode(bytes4(keccak256("transferFrom(address,address,uint256)")),
+            msg.sender, this, _childTokenId
+            ));
+        // );
+        // if successful, add children to the mapping
+        children[_tokenId][_childContract] = _childTokenId;
+        }
 
     function removeChild(uint256 _tokenId, address _childContract, uint256 _childTokenId) private {
         uint256 tokenIndex = childTokenIndex[_tokenId][_childContract][_childTokenId];
@@ -321,6 +374,8 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         emit TransferChild(tokenId, _to, _childContract, _childTokenId);
     }
 
+
+
     function transferChild(uint256 _fromTokenId, address _to, address _childContract, uint256 _childTokenId) external override {
         uint256 tokenId = childTokenOwner[_childContract][_childTokenId];
         require(tokenId > 0 || childTokenIndex[tokenId][_childContract][_childTokenId] > 0);
@@ -367,7 +422,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         IERC721(_childContract).getApproved(_childTokenId) == msg.sender);
         IERC721(_childContract).transferFrom(_from, address(this), _childTokenId);
 
-    }
+    }   
 
     function onERC721Received(address _from, uint256 _childTokenId, bytes calldata _data) external returns (bytes4) {
         require(_data.length > 0, "_data must contain the uint256 tokenId to transfer the child token to.");
@@ -382,8 +437,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         return ERC721_RECEIVED_OLD;
     }
 
-
-    function onERC721Received(address _operator, address _from, uint256 _childTokenId, bytes calldata _data) external override returns (bytes4) {
+  function onERC721Received(address _operator, address _from, uint256 _childTokenId, bytes calldata _data) external override returns (bytes4) {
         require(_data.length > 0, "_data must contain the uint256 tokenId to transfer the child token to.");
         // convert up to 32 bytes of_data to uint256, owner nft tokenId passed as uint in bytes
         uint256 tokenId;
