@@ -246,7 +246,8 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
             require(retval == ERC721_RECEIVED_OLD, "retval invalid");
         }
     }
-    
+
+    //_from = address that owns parent nft, _to = address that minted the child nft, _tokenId = childNft ID, _data = parent NFT ID
     function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes calldata _data) public override {
         _transferFrom(_from, _to, _tokenId);
         if (isContract(_to)) {
