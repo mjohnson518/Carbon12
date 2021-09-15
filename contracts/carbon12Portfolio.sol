@@ -86,10 +86,8 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         tokenOwnerToTokenCount[_to]++;
         return tokenId;
     }
-
-    function mintChild(address _to, string calldata _ipfsUri) public returns (uint256) {
-
-        //this function is still a work in progress don't use yet.
+    //mintChild is still a work in progress don't use yet.
+    function mintChild(address _to, string calldata _ipfsUri) public returns (uint256) {        
         uint256 tokenId = _tokenIdCounter.current();       
         _safeMint(_to, tokenId);
         _setTokenURI(tokenId, _ipfsUri);

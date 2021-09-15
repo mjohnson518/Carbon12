@@ -81,9 +81,11 @@ describe("Carbon12Portfolio", function () {
   });
 
   it("should transfer token 1 from owner to parent nft(id:2) owned by address 1", async function () {
+    //approve(current owner address, token to be transfered)
     const approve = await carbon12Portfolio
       .approve(owner.address, 1)
       .catch((err) => console.log("approval error", err));
+    //safeTransferFrom(current Owner wallet Address, address of contract that minted ChildNFT, tokenid of ChildNFT, tokenId of ParentNFT)
     const tx = await carbon12Portfolio[
       `safeTransferFrom(address,address,uint256,bytes)`
     ](owner.address, carbon12Portfolio.address, 1, 2).catch((err) =>
