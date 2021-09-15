@@ -23,12 +23,16 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { GetProvider } from '../../helpers/GetProvider';
+import { GetProvider } from '../../helpers/getProvider';
 import { getNFTData, storeNftData } from '../../helpers/nftStorage';
 import { CardWithContent } from '../CardWithContent';
 import { FlipCard721 } from '../ImageNFT/FlipCard721';
-import { columns, getFormData, handleTypeFormField, parseAnswers } from './typeform';
-
+import {
+  columns,
+  getFormData,
+  handleTypeFormField,
+  parseAnswers,
+} from './typeform';
 
 let tokenCounter = 0;
 
@@ -42,7 +46,7 @@ export const TableContent = _ => {
     };
   });
 
-  const { contract, signer, provider } = GetProvider("Carbon12")
+  const { contract, signer, provider } = GetProvider('Carbon12');
 
   const nftDatas = getNFTData();
 
@@ -59,11 +63,11 @@ export const TableContent = _ => {
   const [modalContentDisplay, setModalContentDisplay] = useState([]);
 
   function mintIsDisabled(form) {
-    return nftDatas.find((nft) => nft.id === form.id)
+    return nftDatas.find(nft => nft.id === form.id);
   }
 
   function viewIsDisabled(form) {
-    return !nftDatas.some((nft) => nft.id === form.id)
+    return !nftDatas.some(nft => nft.id === form.id);
   }
 
   function setModalandOpen(item) {
@@ -129,7 +133,7 @@ export const TableContent = _ => {
 
   async function mintNFT(ipfsuri, id) {
     try {
-      const tx = await contract.safeMint(signer.getAddress(), ipfsuri)
+      const tx = await contract.safeMint(signer.getAddress(), ipfsuri);
 
       const txMessage = `${tx.hash} transaction is minting your NFT`;
       callToast('Minted Carbon12 NFT', txMessage, 'success');
@@ -145,8 +149,12 @@ export const TableContent = _ => {
       const receiptMessage = `minted NFT to ${receipt.to} on transaction ${receipt.transactionHash}`;
       callToast('Minted Carbon12 NFT', receiptMessage, 'success');
 
-      storeNftData({id: id, to: receipt.from, metadataUri: ipfsuri, transactionHash: receipt.transactionHash})
-
+      storeNftData({
+        id: id,
+        to: receipt.from,
+        metadataUri: ipfsuri,
+        transactionHash: receipt.transactionHash,
+      });
     } catch (err) {
       callToast(
         'Error',
@@ -156,10 +164,8 @@ export const TableContent = _ => {
     }
   }
 
-
   function getQrCode(ipfsUri) {
     return `https://api.qrserver.com/v1/create-qr-code/?data=${ipfsUri}`;
-
   }
 
   async function mintNFTButton(id) {
@@ -179,7 +185,7 @@ export const TableContent = _ => {
         };
 
         const metaDataUpload = await uploadToIPFS(metadata);
-        await mintNFT(metaDataUpload, id).then(() => setDisable(false))
+        await mintNFT(metaDataUpload, id).then(() => setDisable(false));
 
         tokenCounter += 1;
       } else {
@@ -225,28 +231,35 @@ export const TableContent = _ => {
               })}
               <Td textAlign="right">
                 <ButtonGroup spacing="3">
-                  {
-                    mintIsDisabled(form) || disable ?
-                      <Button size="sm" colorScheme="teal" isDisabled>Mint</Button> :
-                      <Button
-                        size="sm"
-                        colorScheme="teal"
-                        onClick={() => mintNFTButton(form.id)}>
-                        Mint
+                  {mintIsDisabled(form) || disable ? (
+                    <Button size="sm" colorScheme="teal" isDisabled>
+                      Mint
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      colorScheme="teal"
+                      onClick={() => mintNFTButton(form.id)}
+                    >
+                      Mint
+                    </Button>
+                  )}
+                  {viewIsDisabled(form) ? (
+                    <Button
+                      size="sm"
+                      colorScheme="teal"
+                      variant="outline"
+                      isDisabled
+                    >
+                      View
+                    </Button>
+                  ) : (
+                    <RouterLink to={`/carbon12/${form.id}`}>
+                      <Button size="sm" colorScheme="teal" variant="outline">
+                        View
                       </Button>
-                  }
-                  {
-                    viewIsDisabled(form) ?
-                      <Button size="sm" colorScheme="teal" variant="outline" isDisabled>View</Button> :
-                      <RouterLink to={`/carbon12/${form.id}`}>
-                        <Button
-                          size="sm"
-                          colorScheme="teal"
-                          variant="outline">
-                          View
-                        </Button>
-                      </RouterLink>
-                  }
+                    </RouterLink>
+                  )}
                 </ButtonGroup>
               </Td>
             </Tr>
