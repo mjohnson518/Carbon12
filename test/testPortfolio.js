@@ -13,6 +13,8 @@ describe("Carbon12Portfolio", function () {
   let carbon12;
   const testUri =
     "ipfs://bafybeihkoviema7g3gxyt6la7vd5ho32ictqbilu3wnlo3rs7ewhnp7lly/";
+  let tokenCounter = 0;
+  let tokensById = [];
   before(async () => {
     const Carbon12Portfolio = await ethers.getContractFactory(
       "Carbon12Portfolio"
@@ -28,59 +30,82 @@ describe("Carbon12Portfolio", function () {
   });
 
   it("should mint a parentNFT and a childNFT to the owner address", async function () {
-    const txp = await carbon12Portfolio.mintParent(owner.address, testUri);
-    const txc = await carbon12Portfolio.mintChild(owner.address, testUri);
+    //mint parent
+    const txp = await carbon12Portfolio
+      .mintParent(owner.address, testUri)
+      .catch((err) => console.log("PARENT MINT ERROR", err));
 
-    const promiseP = await txp.wait();
-    const promiseC = await txc.wait();
-    // console.log(
-    //   "parent",
-    //   promiseP.events[0],
-    //   "child",
-    //   promiseC.events[0],
-    //   rootOwner
-    // );
-    assert(
-      (promiseP.events[0].args.to && promiseC.events[0].args.to) ===
-        owner.address
+    //mint child
+    const txc = await carbon12Portfolio
+      .mintChild(tokenCounter, testUri)
+      .catch((err) => console.log("CHILD MINT ERROR", err));
+    const parentId = tokenCounter;
+    tokensById.push({ parent0: parentId });
+    const promiseP = await txp.wait().then((res) => tokenCounter++);
+    const childId = tokenCounter;
+    tokensById.push({ child0: childId });
+    const promiseC = await txc.wait().then((res) => tokenCounter++);
+
+    const parentOwner = await carbon12Portfolio.ownerOf(parentId);
+    const childOwner = await carbon12Portfolio.ownerOf(childId);
+    console.log(
+      "PARENT OWNER",
+      parentOwner,
+      "CHILD OWNER",
+      childOwner,
+      parentId,
+      childId
     );
+    //promiseP.events[0].args.to;
+    assert((parentOwner && childOwner) === owner.address);
   });
 
-  it("should mint achild and parent nft to addr1", async function () {
-    // const tx = await capture12
-    //   .safeMint(addr1.address, testUri)
-    //   .catch((err) => console.log(err));
-    const txp = await carbon12Portfolio.mintParent(addr1.address, testUri);
-    const txc = await carbon12Portfolio.mintChild(addr1.address, testUri);
+  it("should mint a child and parent nft to addr1", async function () {
+    //store parentCounter
+    const parentId = tokenCounter;
+    tokensById.push({ parent1: parentId });
+    //mint parent
+    const txp = await carbon12Portfolio
+      .mintParent(addr1.address, testUri)
+      .catch((err) => console.log("PARENT MINT ERROR", err));
 
-    const promiseP = await txp.wait();
-    const promiseC = await txc.wait();
-    // console.log(
-    //   "parent",
-    //   promiseP.events[0],
-    //   "child",
-    //   promiseC.events[0],
-    //   rootOwner
-    // );
-    assert(
-      (promiseP.events[0].args.to && promiseC.events[0].args.to) ===
-        addr1.address
+    //mint child
+    const txc = await carbon12Portfolio
+      .mintChild(parentId, testUri)
+      .catch((err) => console.log("CHILD MINT ERROR", err));
+
+    const promiseP = await txp.wait().then((res) => tokenCounter++);
+    const childId = tokenCounter;
+    tokensById.push({ child1: childId });
+    const promiseC = await txc.wait().then((res) => tokenCounter++);
+
+    const parentOwner = await carbon12Portfolio.ownerOf(parentId);
+    const childOwner = await carbon12Portfolio.ownerOf(childId);
+    console.log(
+      "PARENT OWNER",
+      parentOwner,
+      "CHILD OWNER",
+      childOwner,
+      parentId,
+      childId
     );
+    //promiseP.events[0].args.to;
+    assert((parentOwner && childOwner) === addr1.address);
   });
 
   it("should return the number nft's owned by an address(owner)", async function () {
     const tx = await carbon12Portfolio.balanceOf(owner.address);
 
-    assert(tx.toNumber() === 2);
+    assert(tx.toNumber() === 2, "address holds incorrect number of tokens");
   });
 
   it("should return the number nft's owned by an address(addr1)", async function () {
     const tx = await carbon12Portfolio.balanceOf(addr1.address);
 
-    assert(tx.toNumber() === 2);
+    assert(tx.toNumber() === 2, "address holds incorrect number of tokens");
   });
 
-  it("should transfer token 1 from owner to parent nft(id:2) owned by address 1", async function () {
+  it("should transfer childtoken 0 from owner to parent nft(parent 1) owned by address 1", async function () {
     //approve(current owner address, token to be transfered)
     const approve = await carbon12Portfolio
       .approve(owner.address, 1)
@@ -94,16 +119,16 @@ describe("Carbon12Portfolio", function () {
 
     const promise = await tx.wait();
     const ownerOf1 = await carbon12Portfolio.rootOwnerOf(1);
-    const ownerof2 = await carbon12Portfolio.rootOwnerOf(2);
+    const ownerof2 = await carbon12Portfolio.ownerOf(2);
     console.log("ownerOf1", ownerOf1, "ownerof2", ownerof2);
-    assert(ownerOf1 === ownerof2, "token ");
+    assert(ownerOf1 === ownerof2, "token not transfered");
   });
 
   it("owner should only own 1 nft", async function () {
     const tx = await carbon12Portfolio
       .balanceOf(owner.address)
       .catch((err) => console.log(err));
-    assert(tx.toNumber() === 1);
+    assert(tx.toNumber() === 2);
   });
 
   // it("should NOT transfer ownership of childNFT from owner to the ownerNFT", async function () {

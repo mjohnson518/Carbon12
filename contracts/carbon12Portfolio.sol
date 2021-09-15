@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
+import "hardhat/console.sol";
 import "./interfaces/IERC998ERC721TopDown.sol";
 import "./interfaces/ERC998ERC721TopDownEnumerable.sol";
 import "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
@@ -75,33 +76,43 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
     event parentNFTMinted(uint indexed tokenId, address indexed to);
     event childNFTMinted(uint indexed tokenId, address indexed to);
 
-    function mintParent(address _to, string calldata _ipfsUri) public returns(uint){
-          
-        uint256 tokenId = _tokenIdCounter.current();     
-        tokenIdToTokenOwner[tokenId] = _to;
+    function mintParent(address _to, string calldata _ipfsUri) public returns(uint){          
+        uint256 tokenId = _tokenIdCounter.current();
+        //mint token
         _safeMint(_to, tokenId);
-        _setTokenURI(tokenId, _ipfsUri);        
+        _setTokenURI(tokenId, _ipfsUri); 
+        //update parent mappings
+        tokenIdToTokenOwner[tokenId] = _to;
+        tokenOwnerToOperators[_to][address(0)];
+        tokenOwnerToTokenCount[_to]++;
+        //increment counter       
         _tokenIdCounter.increment();
         emit parentNFTMinted(tokenId, address(_to));
-        tokenOwnerToTokenCount[_to]++;
-        return tokenId;
-    }
-    //mintChild is still a work in progress don't use yet.
-    function mintChild(address _to, string calldata _ipfsUri) public returns (uint256) {        
-        uint256 tokenId = _tokenIdCounter.current();       
-        _safeMint(_to, tokenId);
-        _setTokenURI(tokenId, _ipfsUri);
         
-        address rootOwner = convertBytes32ToAddress(rootOwnerOf(tokenId));
-        childContracts[tokenId].push(rootOwner);
-        tokenIdToTokenOwner[tokenId] = _to;
-        _tokenIdCounter.increment();       
-        emit childNFTMinted(tokenId, address(_to));
-        tokenOwnerToTokenCount[_to]++;
         return tokenId;
     }
 
-    function convertBytes32ToAddress(bytes32 root)public returns(address){
+    //mintChild is still a work in progress don't use yet.
+    function mintChild(uint _parentId, string calldata _ipfsUri) public returns (uint256) {        
+        uint256 tokenId = _tokenIdCounter.current(); 
+        address rootOwner = tokenIdToTokenOwner[_parentId];     
+        console.log("tokenId", tokenId, "Root Owner", rootOwner);
+        //mint token
+        _safeMint(rootOwner, tokenId);
+        _setTokenURI(tokenId, _ipfsUri); 
+        //update mappings            
+        childContracts[tokenId].push(address(this));
+        tokenIdToTokenOwner[tokenId] = rootOwner;
+        childContractIndex[tokenId][address(this)]++;
+        childTokenOwner[rootOwner][tokenId]++;
+        tokenOwnerToTokenCount[rootOwner]++; 
+        _tokenIdCounter.increment();              
+        emit childNFTMinted(tokenId, address(rootOwner));
+        
+        return tokenId;
+    }
+
+    function convertBytes32ToAddress(bytes32 root)public pure returns(address){
             return address(uint160(uint256(root)));
     }
 
@@ -254,9 +265,9 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         return rootOwnerOfChild(address(0), _tokenId);
     }
 
-    function addressOfRootOwnerOfChild(address _childContract, uint256 _childTokenId) public returns(address){
+    function addressOfRootOwner(address _childContract, uint256 _childTokenId) public returns(address){
         bytes32 data = rootOwnerOfChild(_childContract, _childTokenId);
-        return toAddress(data, 24);
+        return convertBytes32ToAddress(data);
     }
     // returns the owner at the top of the tree of composables
     // Use Cases handled:
@@ -306,7 +317,7 @@ contract Carbon12Portfolio is IERC998ERC721TopDown, ERC165,ERC998ERC721TopDownEn
         return tokenOwnerToTokenCount[_tokenOwner];
     }
 
-    function approve(address _approved, uint256 _tokenId) public override {
+    function approve(address _approved, uint256 _tokenId) public override {     
         address rootOwner = address(uint160(uint256(rootOwnerOf(_tokenId))));
         require(rootOwner == msg.sender || tokenOwnerToOperators[rootOwner][msg.sender], "rootOwnerOf(_tokenId) does not match mapping");
         rootOwnerAndTokenIdToApprovedAddress[rootOwner][_tokenId] = _approved;
