@@ -119,7 +119,7 @@ describe("Carbon12Portfolio", function () {
 
     const promise = await tx.wait();
     const ownerOf1 = await carbon12Portfolio.rootOwnerOf(1);
-    const ownerof2 = await carbon12Portfolio.ownerOf(2);
+    const ownerof2 = await carbon12Portfolio.rootOwnerOf(2);
     console.log("ownerOf1", ownerOf1, "ownerof2", ownerof2);
     assert(ownerOf1 === ownerof2, "token not transfered");
   });
@@ -128,7 +128,7 @@ describe("Carbon12Portfolio", function () {
     const tx = await carbon12Portfolio
       .balanceOf(owner.address)
       .catch((err) => console.log(err));
-    assert(tx.toNumber() === 2);
+    assert(tx.toNumber() === 1);
   });
 
   // it("should NOT transfer ownership of childNFT from owner to the ownerNFT", async function () {
