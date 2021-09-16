@@ -30,13 +30,12 @@ export function storeNftData(nftData, isConnected = true) {
   currentData.push(nftData)
 
   if (nftData.tokenId) {
-
     resolvedData = uniqBy(
       currentData.filter((nft) => nft.tokenId && nft.id),
       (data) => data.id
     )
   } else {
-    resolvedData = currentData;
+    resolvedData = currentData.filter((nft) => nft.id);
   }
 
   localStorage.setItem('nftData', JSON.stringify(resolvedData));

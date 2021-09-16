@@ -16,9 +16,14 @@ import { viewCarbon12Decorator } from './ViewCarbon12Decorator';
 
 export default function ViewCarbon12() {
   let { id } = useParams();
+<<<<<<< HEAD
   const { signer, contract } = GetProvider('Cabon12');
   const formData = getFormData();
   const form = formData.find(f => f.id === id);
+=======
+
+  const { signer, contract } = GetProvider('Cabon12');
+>>>>>>> d005c83 (adding nft display)
 
   const nftData = getNFTData().find(nft => nft.id === id);
   const tokenId = nftData.tokenId;
@@ -33,6 +38,8 @@ export default function ViewCarbon12() {
     setTitle(data.answers?.companyName);
     setDescription(data.answers?.productName);
     setContentDisplay(data.answers);
+
+    return true;
   }
 
   const getIpfsData = async () => {
@@ -52,6 +59,10 @@ export default function ViewCarbon12() {
     });
   };
 
+  function objectsLoaded() {
+    return Object.keys(contentDisplay).length === 0 && title && qrCodeImage
+  }
+
   useEffect(() => {
     getIpfsData().then(async data => {
       await setData(data);
@@ -60,7 +71,7 @@ export default function ViewCarbon12() {
     });
   }, []);
 
-  if (loading && Object.keys(contentDisplay).length === 0) {
+  if (loading && objectsLoaded()) {
     return (
       <SimpleCard minHeight="800px" title="Resolving the IPFS Data" p="150px">
         <Center mb="50px">
@@ -90,11 +101,17 @@ export default function ViewCarbon12() {
     );
   };
 
+  const ipfsDataString = JSON.stringify(contentDisplay)
+  console.log(ipfsDataString)
   return (
     <>
-      <FlipCard721 />
-      <BackButton />
-      <Heading as="h1">{title}</Heading>
+      {ipfsDataString && qrCodeImage && <FlipCard721
+        tokenId={tokenId}
+        title={title}
+        qrCodeImage={qrCodeImage}
+        ipfsDataString={ipfsDataString} /> }
+      <BackButton/>
+      <Heading>{title}</Heading>
       <Heading size="xs">Product - {description}</Heading>
       <SimpleGrid columns={2} spacing={10}>
         <Box height="100%">
