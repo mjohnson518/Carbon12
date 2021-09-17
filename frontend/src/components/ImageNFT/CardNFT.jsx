@@ -135,12 +135,12 @@ export const CardNFT = (props) => {
               <Text as="sub" fontSize="24px" display="flex" color="teal" fontWeight="bolder">
                 { data.ipfsData?.companyName }
               </Text>
-              <Text fontWeight="bold" as="sub" fontSize="18px" display="flex">
+              <Text fontWeight="bold" as="sub" color="black" fontSize="18px" display="flex">
                 { data.ipfsData.productName }
               </Text>
             </Stack>
             <Link href={tokenURI} _hover={undefined} isExternal fontSize="sm" minW="20">
-              <Button variant="outline" colorScheme="teal">
+              <Button backgroundColor="teal">
                 View Data
               </Button>
             </Link>

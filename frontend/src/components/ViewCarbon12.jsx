@@ -16,14 +16,8 @@ import { viewCarbon12Decorator } from './ViewCarbon12Decorator';
 
 export default function ViewCarbon12() {
   let { id } = useParams();
-<<<<<<< HEAD
-  const { signer, contract } = GetProvider('Cabon12');
-  const formData = getFormData();
-  const form = formData.find(f => f.id === id);
-=======
 
   const { signer, contract } = GetProvider('Cabon12');
->>>>>>> d005c83 (adding nft display)
 
   const nftData = getNFTData().find(nft => nft.id === id);
   const tokenId = nftData.tokenId;

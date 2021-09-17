@@ -43,9 +43,9 @@ export const TableActions = (props) => {
           onClick={() => handleFormData()}>
           re-sync
         </Button>
-        <Button iconSpacing="1" leftIcon={<RiArrowRightUpLine fontSize="1.25em" />}>
+        {/* <Button iconSpacing="1" leftIcon={<RiArrowRightUpLine fontSize="1.25em" />}>
           Export CSV
-        </Button>
+        </Button> */}
       </ButtonGroup>
     </Stack>
   )
