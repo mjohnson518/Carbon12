@@ -4,6 +4,9 @@ This is the final project for the [Chainshot Ethereum Developers Bootcamp](https
 
 The aim of the project is to leverage the web3 tech stack to showcase how we can track and trace embodied emissions through industrial supply chains. For additional info, please check out the [Chainshot Forum post here](https://forum.chainshot.com/t/carbon12-final-project/57).
 
+
+![Data Flow](/Snip20211010_68.png)
+
 # Setup
 
 1. add the packages with `yarn install`
